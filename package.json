@@ -15,11 +15,14 @@
     "@astrojs/sitemap": "^3.2.1",
     "@react-three/drei": "^9.121.4",
     "@react-three/fiber": "^8.17.14",
+    "@tailwindcss/vite": "^4.0.9",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "astro": "^5.2.3",
+    "framer-motion": "^12.4.10",
     "my-astro-project": "file:",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^4.0.9"
   }
 }

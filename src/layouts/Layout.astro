@@ -1,0 +1,52 @@
+---
+import Navbar from '../components/Navbar.astro';
+import "../styles/index.css";
+
+const { title = 'FurnishCraft - Elegant Furniture' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <title>{title}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <Navbar />
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --accent: #FCD34D;
+    --accent-dark: #F59E0B;
+  }
+  
+  html {
+    font-family: 'Poppins', sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: 'Playfair Display', serif;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: #FFFBF2;
+    color: #1F2937;
+  }
+
+  main {
+    padding-top: 4rem;
+  }
+</style>
