@@ -1,0 +1,180 @@
+---
+// Import necessary components and utilities
+import Layout from '../../layouts/Layout.astro';
+
+// Mock products data
+const products = [
+  {
+    name: 'Wood Outdoor Adirondack Chair',
+    price: 1009,
+    originalPrice: 1250,
+    image: 'https://placehold.co/300x300',
+    status: 'HOT',
+    rating: 4,
+    reviews: 3
+  },
+  {
+    name: 'Led Adjustable Brass Floor Lamp',
+    price: 224,
+    originalPrice: 299,
+    image: 'https://placehold.co/300x300',
+    status: 'SOLD OUT',
+    rating: 5,
+    reviews: 12
+  },
+  {
+    name: 'Solid Wood Shoes Cabinet',
+    price: 1199,
+    originalPrice: 1499,
+    image: 'https://placehold.co/300x300',
+    status: 'SALE',
+    rating: 4,
+    reviews: 8
+  },
+  {
+    name: 'Living Room Furniture Chair',
+    price: 3049,
+    originalPrice: 3499,
+    image: 'https://placehold.co/300x300',
+    status: 'SALE',
+    rating: 3,
+    reviews: 5
+  },
+  {
+    name: 'Swivel Upholstered Fabric Chair',
+    price: 329,
+    originalPrice: 449,
+    image: 'https://placehold.co/300x300',
+    status: 'SALE',
+    rating: 4,
+    reviews: 15
+  }
+];
+
+// Categories for filtering
+const categories = ['All', 'Furniture', 'Lighting', 'Decor', 'Storage'];
+
+// Sort options
+const sortOptions = ['Latest', 'Price: Low to High', 'Price: High to Low', 'Most Popular'];
+---
+
+<Layout title="Shop - Bablon">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Breadcrumb -->
+    <nav class="text-sm mb-8">
+      <ol class="flex items-center space-x-2">
+        <li><a href="/" class="text-gray-500 hover:text-gray-700">Home</a></li>
+        <li><span class="text-gray-500">/</span></li>
+        <li><span class="text-gray-900">Shop</span></li>
+      </ol>
+    </nav>
+
+    <!-- Filters and Sort -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+      <div class="flex space-x-4 mb-4 md:mb-0 overflow-x-auto">
+        {categories.map(category => (
+          <button class="px-4 py-2 text-sm rounded-full border border-gray-300 hover:border-gray-900 hover:text-gray-900 whitespace-nowrap">
+            {category}
+          </button>
+        ))}
+      </div>
+      <div class="relative">
+        <select class="appearance-none bg-white border border-gray-300 rounded-md pl-4 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent">
+          {sortOptions.map(option => (
+            <option>{option}</option>
+          ))}
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+          <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      {products.map(product => (
+        <div class="group relative">
+          <div class="relative">
+            {product.status && (
+              <span class={`absolute top-4 left-4 px-2 py-1 text-sm text-white ${
+                product.status === 'SALE' ? 'bg-gray-900' : 
+                product.status === 'HOT' ? 'bg-red-600' : 'bg-gray-500'
+              }`}>{product.status}</span>
+            )}
+            <img src={product.image} alt={product.name} class="w-full rounded-lg" />
+            <button class="absolute right-4 top-4 text-gray-500 hover:text-gray-700">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
+          </div>
+          <div class="mt-4">
+            <h3 class="text-sm text-gray-700 group-hover:text-gray-900">
+              <a href={`/products/${product.name.toLowerCase().replace(/ /g, '-')}`}>
+                {product.name}
+              </a>
+            </h3>
+            <div class="mt-1 flex items-center space-x-2">
+              <span class="text-lg font-medium text-gray-900">${product.price}</span>
+              <span class="text-sm text-gray-500 line-through">${product.originalPrice}</span>
+            </div>
+            <div class="mt-2 flex items-center space-x-2">
+              <div class="flex items-center">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <svg class={`w-4 h-4 ${index < product.rating ? 'text-yellow-400' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
+              <span class="text-sm text-gray-500">({product.reviews})</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-12 flex justify-center">
+      <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+          <span class="sr-only">Previous</span>
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">1</a>
+        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-gray-900 text-sm font-medium text-white">2</a>
+        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">3</a>
+        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+          <span class="sr-only">Next</span>
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </nav>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Initialize category filters
+  const categoryButtons = document.querySelectorAll('button');
+  categoryButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      categoryButtons.forEach(btn => btn.classList.remove('border-gray-900', 'text-gray-900'));
+      button.classList.add('border-gray-900', 'text-gray-900');
+    });
+  });
+
+  // Initialize wishlist buttons
+  const wishlistButtons = document.querySelectorAll('button svg');
+  wishlistButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
+      const parent = button.closest('button');
+      parent.classList.toggle('text-red-600');
+    });
+  });
+</script>

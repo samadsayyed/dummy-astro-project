@@ -1,5 +1,6 @@
 ---
-import Navbar from '../components/Navbar.astro';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer.astro';
 import "../styles/index.css";
 
 const { title = 'FurnishCraft - Elegant Furniture' } = Astro.props;
@@ -17,10 +18,11 @@ const { title = 'FurnishCraft - Elegant Furniture' } = Astro.props;
     <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@300;400;500;600;700&family=Nunito:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
   </head>
   <body>
-    <Navbar />
+    <Navbar client:only />
     <main>
       <slot />
     </main>
+    <Footer/>
   </body>
 </html>
 
@@ -46,7 +48,23 @@ const { title = 'FurnishCraft - Elegant Furniture' } = Astro.props;
     color: #1F2937;
   }
 
-  main {
-    padding-top: 4rem;
+  /* Custom Scrollbar Styles */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #000000;
+    border-radius: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 8px;
+    border: 3px solid #000000;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-dark);
   }
 </style>

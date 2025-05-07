@@ -1,86 +1,19 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Scene3D from '../components/Scene3D';
+import CategorySection from '../components/CategorySection.astro';
+import ModernFurnitureShowcase from '../components/CardsSection';
+import BlogSection from '../components/BlogSection.astro';
+import VideoSection from '../components/VideoSection.astro';
+import Hero from '../components/Hero.astro';
 ---
 
 <Layout>
-  <div class="relative">
-    <Scene3D client:load />
-    <div class="absolute inset-0 bg-black bg-[url('/src/assets/background.svg')] bg-cover bg-center bg-no-repeat -z-10"></div>
-    
-    <div class="relative min-h-screen">
-      <div class="pointer-events-none min-h-screen flex items-center justify-center text-center px-4  ">
-        <div class="max-w-4xl mx-auto z-10">
-          <h1 class="text-6xl font-bold mb-6 text-white">
-            Crafting Elegance for Your Space
-          </h1>
-          <p class="text-xl text-white/80 mb-8">
-            Discover our curated collection of premium furniture pieces that blend artistry with functionality.
-          </p>
-          <a
-            href="/products"
-            class="inline-block bg-yellow-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-yellow-600 transition-colors"
-          >
-            Explore Collection
-          </a>
-        </div>
-      </div>
-
-      <div class="min-h-screen flex items-center justify-center bg-white/80 backdrop-blur-sm">
-        <div class="max-w-6xl mx-auto px-4">
-          <h2 class="text-5xl font-bold mb-12 text-center">Our Design Philosophy</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div class="text-center">
-              <h3 class="text-2xl font-semibold mb-4">Timeless Elegance</h3>
-              <p class="text-gray-600">Crafted with precision and care, our furniture pieces stand the test of time both in style and durability.</p>
-            </div>
-            <div class="text-center">
-              <h3 class="text-2xl font-semibold mb-4">Sustainable Craftsmanship</h3>
-              <p class="text-gray-600">We believe in responsible manufacturing, using eco-friendly materials and sustainable practices.</p>
-            </div>
-            <div class="text-center">
-              <h3 class="text-2xl font-semibold mb-4">Modern Comfort</h3>
-              <p class="text-gray-600">Every piece is designed with your comfort in mind, blending aesthetics with ergonomic excellence.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <section class="relative min-h-screen py-20 px-4 bg-[url('/bg-image.webp')] bg-cover bg-center bg-no-repeat">
-        <!-- <div class="absolute inset-0 bg-white/50 backdrop-blur-md"></div> Semi-transparent blur -->
-      
-        <div class="max-w-7xl mx-auto z-10">
-          <h2 class="text-4xl font-bold text-center mb-16">Featured Categories</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {['Living Room', 'Bedroom', 'Dining'].map(category => (
-              <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-transform">
-                <div class="h-64 bg-yellow-100"></div>
-                <div class="p-6">
-                  <h3 class="text-2xl font-semibold mb-2">{category}</h3>
-                  <p class="text-gray-600">Explore our {category.toLowerCase()} collection</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section class="min-h-screen flex items-center justify-center bg-gray-900/50 text-white">
-        <div class="max-w-4xl mx-auto px-4 text-center">
-          <h2 class="text-5xl font-bold mb-8">Experience Luxury</h2>
-          <p class="text-xl mb-12">
-            Each piece in our collection is a masterpiece of design, crafted to transform your living space into a sanctuary of style and comfort.
-          </p>
-          <a
-            href="/products"
-            class="inline-block bg-yellow-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-yellow-600 transition-colors"
-          >
-            View Collection
-          </a>
-        </div>
-      </section>
-    </div>
-  </div>
+  <Hero/>
+  <CategorySection />
+  <ModernFurnitureShowcase client:load />
+  <BlogSection client:load />
+  <VideoSection />
 </Layout>
 
 <style>

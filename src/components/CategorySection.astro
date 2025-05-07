@@ -1,0 +1,49 @@
+---
+// Save this as src/components/ShopByCategory.astro
+const categories = [
+  { 
+    name: "Table", 
+    products: 5, 
+    image: "https://placehold.co/100"
+  },
+  { 
+    name: "Bed", 
+    products: 7, 
+    image: "https://placehold.co/100"
+  },
+  { 
+    name: "Lamp", 
+    products: 7, 
+    image: "https://placehold.co/100"
+  },
+  { 
+    name: "Chair", 
+    products: 12, 
+    image: "https://placehold.co/100"
+  }
+];
+---
+
+<section class="py-16 px-4 max-w-7xl mx-auto">
+  <h2 class="text-2xl font-bold mb-12 uppercase">Shop by category</h2>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    {categories.map((category) => (
+      <a href="#" class="flex items-center  group">
+        <div class="relative w-24 aspect-square rounded-full overflow-hidden">
+          <img 
+            src={category.image} 
+            alt={`${category.name} category`} 
+            class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+          />
+          <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+        </div>
+        
+        <div class="text-center ml-4">
+          <h3 class="text-lg font-medium">{category.name}</h3>
+          <p class="text-sm text-gray-600">{category.products} products</p>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>
