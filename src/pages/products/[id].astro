@@ -1,6 +1,17 @@
 ---
 // Import necessary components and utilities
-import Layout from '../layouts/Layout.astro';
+import Layout from '../../layouts/Layout.astro';
+
+export function getStaticPaths() {
+  // Mock product IDs that should be pre-rendered
+  return [
+    { params: { id: '1' } },
+    { params: { id: '2' } },
+    { params: { id: '3' } },
+    { params: { id: '4' } },
+    { params: { id: '5' } }
+  ];
+}
 
 // Mock product data
 const product = {
