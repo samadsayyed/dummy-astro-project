@@ -1,76 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { addToCart } from '../utils/cartUtils';
 
 export default function ModernFurnitureShowcase() {
-  const products = [
-    {
-      id: 1,
-      name: "Wood Outdoor Adirondack Chair",
-      image: "https://placehold.co/600x400",
-      price: 1009,
-      originalPrice: 1250,
-      isHot: true,
-      isOnSale: true
-    },
-    {
-      id: 2,
-      name: "Solid Wood Bar Storage Cabinet",
-      image: "https://placehold.co/600x400",
-      price: 1899,
-      originalPrice: null,
-      isHot: false,
-      isOnSale: false
-    },
-    {
-      id: 3,
-      name: "Solid Wood Bed With Fabric Headboard",
-      image: "https://placehold.co/600x400",
-      price: 3707,
-      maxPrice: 5707,
-      originalPrice: null,
-      isHot: false,
-      isOnSale: false
-    },
-    {
-        id: 3,
-        name: "Solid Wood Bed With Fabric Headboard",
-        image: "https://placehold.co/600x400",
-        price: 3707,
-        maxPrice: 5707,
-        originalPrice: null,
-        isHot: false,
-        isOnSale: false
-      },
-      {
-          id: 3,
-          name: "Solid Wood Bed With Fabric Headboard",
-          image: "https://placehold.co/600x400",
-          price: 3707,
-          maxPrice: 5707,
-          originalPrice: null,
-          isHot: false,
-          isOnSale: false
-        },
-        {
-            id: 3,
-            name: "Solid Wood Bed With Fabric Headboard",
-            image: "https://placehold.co/600x400",
-            price: 3707,
-            maxPrice: 5707,
-            originalPrice: null,
-            isHot: false,
-            isOnSale: false
-          },
-          {
-              id: 3,
-              name: "Solid Wood Bed With Fabric Headboard",
-              image: "https://placehold.co/600x400",
-              price: 3707,
-              maxPrice: 5707,
-              originalPrice: null,
-              isHot: false,
-              isOnSale: false
-            }
-  ];
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('https://admin.bablon.in/api/products?limit=7');
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col md:flex-row">
@@ -101,7 +52,7 @@ function ProductCard({ product }) {
   const [isAddToCartHovered, setIsAddToCartHovered] = useState(false);
   
   const formatPrice = (price) => {
-    return `$${price.toLocaleString()}`;
+    return `₹${price.toLocaleString()}`;
   };
 
   return (
@@ -113,7 +64,9 @@ function ProductCard({ product }) {
       {/* Product Image */}
       <div className="relative overflow-hidden">
         {/* Hot and Sale Tags */}
-        {(product.isHot || product.isOnSale) && (
+        {(product.in_stock === false) ? (
+          <span className="bg-gray-600 text-white text-xs px-2 py-1">OUT OF STOCK</span>
+        ) : (product.isHot || product.isOnSale) && (
           <div className="absolute top-2 left-2 flex gap-1 z-10">
             {product.isHot && (
               <span className="bg-red-600 text-white text-xs px-2 py-1">HOT</span>
@@ -125,7 +78,7 @@ function ProductCard({ product }) {
         )}
 
         <img 
-          src={product.image} 
+          src={product.gallery[0]} 
           alt={product.name} 
           className="w-full h-80 object-cover transition-transform duration-500 ease-in-out"
           style={{ transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
@@ -156,6 +109,18 @@ function ProductCard({ product }) {
               } ${isHovered ? 'opacity-100' : 'opacity-0'}`}
               onMouseEnter={() => setIsAddToCartHovered(true)}
               onMouseLeave={() => setIsAddToCartHovered(false)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                addToCart(product);
+                // Show feedback
+                const button = e.target;
+                const originalText = button.textContent;
+                button.textContent = 'ADDED ✓';
+                setTimeout(() => {
+                  button.textContent = originalText;
+                }, 1500);
+              }}
             >
               ADD TO CART
             </button>
@@ -175,15 +140,15 @@ function ProductCard({ product }) {
         <div className="mt-2 flex items-center">
           <span className="font-bold">{formatPrice(product.price)}</span>
           
-          {product.maxPrice && (
+          {product.discount_price && (
             <span className="font-bold ml-1">
-              &nbsp;– {formatPrice(product.maxPrice)}
+              &nbsp;– {formatPrice(product.discount_price)}
             </span>
           )}
           
-          {product.originalPrice && (
+          {product.price && (
             <span className="line-through text-gray-500 ml-2">
-              ${product.originalPrice}
+              ₹{product.price}
             </span>
           )}
         </div>

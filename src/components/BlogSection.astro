@@ -29,7 +29,7 @@ const blogPosts = [
     image: 'https://placehold.co/800x600'
   },
   {
-    id: 3,
+    id: 4,
     date: 'JAN 9, 2025',
     category: 'DECOR, LIGHTING',
     title: 'Essential Elements of Home Staging',
@@ -37,7 +37,7 @@ const blogPosts = [
     image: 'https://placehold.co/800x600'
   },
   {
-    id: 3,
+    id: 5,
     date: 'JAN 9, 2025',
     category: 'DECOR, LIGHTING',
     title: 'Essential Elements of Home Staging',
@@ -49,12 +49,14 @@ const blogPosts = [
 
 <section class="py-16 px-4 overflow-x-clip">
   <div class="max-w-7xl mx-auto">
-    <h2 class="text-3xl font-bold mb-8">OUR BLOG</h2>
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-3xl font-bold">OUR BLOG</h2>
+    </div>
     
-    <div class="swiper-container">
+    <div class="swiper-container relative">
       <div class="swiper-wrapper">
         {blogPosts.map((post) => (
-          <div class="swiper-slide " key={post.id}>
+          <div class="swiper-slide" key={post.id}>
             <article class="bg-white flex">
               <div class="relative">
                 <img
@@ -90,11 +92,38 @@ const blogPosts = [
           </div>
         ))}
       </div>
-      <div class="swiper-button-next"></div>
-      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next !right-0 !top-1/2 !z-10"></div>
+      <div class="swiper-button-prev !left-0 !top-1/2 !z-10"></div>
     </div>
   </div>
 </section>
+
+<style>
+  .swiper-button-next,
+  .swiper-button-prev {
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-50%);
+  }
+
+  .swiper-button-next:after,
+  .swiper-button-prev:after {
+    font-size: 18px;
+    color: #333;
+  }
+
+  .swiper-button-disabled {
+    opacity: 0.5;
+  }
+  
+  /* Add some spacing for the arrows */
+  .swiper-container {
+    padding: 0 50px;
+  }
+</style>
 
 <script>
   import Swiper from 'swiper';
