@@ -19,6 +19,7 @@
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "astro": "^5.2.3",
+    "axios": "^1.9.0",
     "framer-motion": "^12.4.10",
     "my-astro-project": "file:",
     "react": "^18.3.1",
