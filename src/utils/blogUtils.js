@@ -138,7 +138,7 @@ const blogData = {
 
 // Get all blogs for listing
 const getAllBlogs = () => {
-  return Object.values(blogData);
+  return Object.values(blogData) ;
 };
 
 // Get a specific blog by ID
