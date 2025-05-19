@@ -2,49 +2,12 @@
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
+import { getAllBlogs } from '../utils/blogUtils';
 
-const blogPosts = [
-  {
-    id: 1,
-    date: 'JAN 9, 2025',
-    category: 'FURNITURE, TABLE',
-    title: 'The Secrets to a Living Room that Draws You In',
-    description: 'Nunc ut sem ut ex sollicitudin commodo. Suspendisse non enim felis. Nam nec diam ultricies, malesuada',
-    image: 'https://placehold.co/800x600'
-  },
-  {
-    id: 2,
-    date: 'JAN 9, 2025',
-    category: 'FURNITURE, CHAIR',
-    title: 'Modern Interior Design Trends',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.',
-    image: 'https://placehold.co/800x600'
-  },
-  {
-    id: 3,
-    date: 'JAN 9, 2025',
-    category: 'DECOR, LIGHTING',
-    title: 'Essential Elements of Home Staging',
-    description: 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae.',
-    image: 'https://placehold.co/800x600'
-  },
-  {
-    id: 4,
-    date: 'JAN 9, 2025',
-    category: 'DECOR, LIGHTING',
-    title: 'Essential Elements of Home Staging',
-    description: 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae.',
-    image: 'https://placehold.co/800x600'
-  },
-  {
-    id: 5,
-    date: 'JAN 9, 2025',
-    category: 'DECOR, LIGHTING',
-    title: 'Essential Elements of Home Staging',
-    description: 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae.',
-    image: 'https://placehold.co/800x600'
-  }
-];
+// Get blog posts from the utility function
+const blogPosts = getAllBlogs();
+// Limit to 5 posts for the homepage section
+const featuredPosts = blogPosts.slice(0, 5);
 ---
 
 <section class="py-16 px-4 overflow-x-clip">
@@ -55,7 +18,7 @@ const blogPosts = [
     
     <div class="swiper-container relative">
       <div class="swiper-wrapper">
-        {blogPosts.map((post) => (
+        {featuredPosts.map((post) => (
           <div class="swiper-slide" key={post.id}>
             <article class="bg-white flex">
               <div class="relative">
@@ -82,7 +45,7 @@ const blogPosts = [
                   {post.description}
                 </p>
                 <a
-                  href="#"
+                  href={`/blogs/${post.id}`}
                   class="inline-block text-sm font-medium hover:text-gray-900"
                 >
                   READ MORE

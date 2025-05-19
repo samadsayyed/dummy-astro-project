@@ -1,0 +1,106 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Blog Editor - Admin Panel">
+  <main class="max-w-4xl mx-auto px-4 py-12">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold">Blog Editor</h1>
+      <a href="/blogs" class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors">View All Blogs</a>
+    </div>
+    
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <form id="blog-form" class="space-y-6">
+        <div>
+          <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Blog Title</label>
+          <input type="text" id="title" name="title" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500">
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <input type="text" id="category" name="category" placeholder="FURNITURE, DESIGN" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500">
+          </div>
+          
+          <div>
+            <label for="author" class="block text-sm font-medium text-gray-700 mb-1">Author</label>
+            <input type="text" id="author" name="author" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500">
+          </div>
+        </div>
+        
+        <div>
+          <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Featured Image URL</label>
+          <input type="url" id="image" name="image" placeholder="https://example.com/image.jpg" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500">
+        </div>
+        
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Short Description</label>
+          <textarea id="description" name="description" rows="2" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500"></textarea>
+        </div>
+        
+        <div>
+          <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Blog Content (HTML)</label>
+          <textarea id="content" name="content" rows="10" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500 font-mono"></textarea>
+        </div>
+        
+        <div>
+          <label for="relatedPosts" class="block text-sm font-medium text-gray-700 mb-1">Related Posts (IDs, comma separated)</label>
+          <input type="text" id="relatedPosts" name="relatedPosts" placeholder="1, 2, 3" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500 focus:border-gray-500">
+        </div>
+        
+        <div class="flex justify-end space-x-4">
+          <button type="button" id="preview-btn" class="px-6 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">
+            Preview
+          </button>
+          <button type="submit" class="px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">
+            Save Blog Post
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('blog-form');
+    const previewBtn = document.getElementById('preview-btn');
+    
+    // Handle form submission
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // In a real implementation, this would send data to a backend API
+      // For now, we'll just show an alert
+      alert('Blog post saved successfully! In a real implementation, this would be saved to a database.');
+      
+      // Example of how you might collect the form data
+      const formData = new FormData(form);
+      const blogData = {};
+      
+      for (const [key, value] of formData.entries()) {
+        blogData[key] = value;
+      }
+      
+      // Process related posts to convert from string to array of numbers
+      if (blogData.relatedPosts) {
+        blogData.relatedPosts = blogData.relatedPosts
+          .split(',')
+          .map(id => id.trim())
+          .filter(id => id)
+          .map(id => parseInt(id, 10));
+      }
+      
+      console.log('Blog data to save:', blogData);
+    });
+    
+    // Handle preview button
+    previewBtn.addEventListener('click', () => {
+      alert('In a real implementation, this would show a preview of the blog post.');
+    });
+  });
+</script>
+
+<style>
+  /* Add any custom styles here */
+</style>

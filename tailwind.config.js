@@ -13,6 +13,15 @@ module.exports = {
         sans: ["'Nunito', sans-serif"],
         heading: ["'Antonio', sans-serif"],
       },
+      keyframes: {
+        shimmer: {
+          '0%': { backgroundPosition: '200% 0' },
+          '100%': { backgroundPosition: '0% 0' }
+        }
+      },
+      animation: {
+        shimmer: 'shimmer 1.5s infinite linear'
+      }
     },
   },
   plugins: [],

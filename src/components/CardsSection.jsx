@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { addToCart } from '../utils/cartUtils';
+import Loader from './Loader';
 
 export default function ModernFurnitureShowcase() {
   const [products, setProducts] = useState([]);
@@ -21,7 +22,7 @@ export default function ModernFurnitureShowcase() {
     fetchProducts();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loader />;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col md:flex-row">

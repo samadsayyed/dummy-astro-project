@@ -73,12 +73,12 @@
           </svg>
           <span class="absolute -top-3 -right-3 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center p-[10px]">0</span>
         </a>
-        <button id="cart-button" class="relative" aria-label="Cart">
+        <a href="/cart" id="cart-button" class="relative" aria-label="Cart">
           <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
           </svg>
           <span class="cart-count absolute -top-3 -right-3 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center hidden p-[10px]"></span>
-        </button>
+        </a>
       </div>
     </div>
   </div>
@@ -186,9 +186,9 @@
           <span>Subtotal</span>
           <span id="cart-subtotal">$0.00</span>
         </div>
-        <button id="checkout-button" class="w-full bg-black text-white py-2.5 text-sm hover:bg-gray-900 transition-colors disabled:bg-gray-200 disabled:text-gray-500" disabled>
+        <a href="/checkout" id="checkout-button" class="w-full bg-black text-white py-2.5 text-sm hover:bg-gray-900 transition-colors disabled:bg-gray-200 disabled:text-gray-500 block text-center">
           Checkout
-        </button>
+        </a>
       </div>
     </div>
   </div>
@@ -408,7 +408,15 @@
       
       // Update subtotal and checkout button
       cartSubtotal.textContent = formatPrice(cart.subtotal);
-      checkoutButton.disabled = cart.items.length === 0;
+      
+      // Handle checkout button state
+      if (cart.items.length === 0) {
+        checkoutButton.classList.add('disabled:bg-gray-200', 'disabled:text-gray-500', 'pointer-events-none');
+        checkoutButton.setAttribute('aria-disabled', 'true');
+      } else {
+        checkoutButton.classList.remove('disabled:bg-gray-200', 'disabled:text-gray-500', 'pointer-events-none');
+        checkoutButton.removeAttribute('aria-disabled');
+      }
     }
   });
 </script>

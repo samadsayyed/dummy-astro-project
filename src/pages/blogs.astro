@@ -1,80 +1,25 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { getAllBlogs } from '../utils/blogUtils';
 
-const blogs = [
-  {
-    date: 'JAN 2023',
-    title: 'The Secrets to a Living Room that Draws You In',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    image: 'https://placehold.co/800x600',
-    link: '#'
-  },
-  {
-    date: 'FEB 2023',
-    title: 'What is Feng Shui and How Can I Use It When Decorating?',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    image: 'https://placehold.co/800x600',
-    link: '#'
-  },
-  {
-    date: 'MAR 2023',
-    title: 'Customer Delight Makes Furniture Shopping Easy',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    image: 'https://placehold.co/800x600',
-    link: '#'
-  },
-  {
-    date: 'APR 2023',
-    title: "What's in a Child's Bedroom Set?",
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    image: 'https://placehold.co/800x600',
-    link: '#'
-  },
-  {
-    date: 'MAY 2023',
-    title: 'What to Look for When you Buy a Coffee Table',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    image: 'https://placehold.co/800x600',
-    link: '#'
-  },
-  {
-    date: 'JUN 2023',
-    title: "Space Saving Sleep Options for Your Child's Bedroom",
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    image: 'https://placehold.co/800x600',
-    link: '#'
-  },
-  {
-    date: 'JUL 2023',
-    title: 'Add Color to your Neutral Home Decor',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    image: 'https://placehold.co/800x600',
-    link: '#'
-  },
-  {
-    date: 'AUG 2023',
-    title: "If you're looking for furniture bargains",
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    image: 'https://placehold.co/800x600',
-    link: '#'
-  }
-];
+// Get all blogs for the listing page
+const blogs = getAllBlogs();
 ---
 
 <Layout title="Blog Masonry">
   <div class="container mx-auto px-4 py-8">
     <h1 class="text-center text-4xl font-bold mb-8">Blog Masonry</h1>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      {blogs.map(blog => (
+      {blogs.map((blog, index) => (
         <div class="group relative">
           <img src={blog.image} alt={blog.title} class="w-full rounded-lg" />
           <div class="mt-4">
             <span class="text-sm text-gray-500">{blog.date}</span>
             <h3 class="text-lg font-medium text-gray-900 group-hover:text-gray-700">
-              <a href={blog.link}>{blog.title}</a>
+              <a href={`/blogs/${index + 1}`}>{blog.title}</a>
             </h3>
             <p class="text-sm text-gray-500">{blog.description}</p>
-            <a href={blog.link} class="text-blue-500 hover:text-blue-700">Read More</a>
+            <a href={`/blogs/${index + 1}`} class="text-blue-500 hover:text-blue-700">Read More</a>
           </div>
         </div>
       ))}
