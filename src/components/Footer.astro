@@ -1,0 +1,142 @@
+---
+// Footer.astro
+---
+
+<footer class="border-t border-gray-200 pt-10 pb-5">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {/* Column 1: Logo and Contact Info */}
+        <div>
+          <a href="/" class="inline-block mb-5">
+            <img src="/logo.png" class=" h-11" alt="">
+          </a>
+          <div class="space-y-2 text-sm">
+            <p>Text: +00(234)23-45-666</p>
+            <p>Mon – Fri: 8 am – 8 pm</p>
+            <p>Sat – Sun: 8 am – 7 pm</p>
+          </div>
+        </div>
+  
+        {/* Column 2: About */}
+        <div>
+          <h3 class="font-medium text-base uppercase mb-4">ABOUT</h3>
+          <ul class="space-y-3">
+            <li><a href="/our-story" class="text-sm hover:underline">Our Story</a></li>
+            <li><a href="/careers" class="text-sm hover:underline">Careers</a></li>
+            <li><a href="/influencers" class="text-sm hover:underline">Influencers</a></li>
+            <li><a href="/join-our-team" class="text-sm hover:underline">Join our team</a></li>
+          </ul>
+        </div>
+  
+        {/* Column 3: Customer Services */}
+        <div>
+          <h3 class="font-medium text-base uppercase mb-4">CUSTOMER SERVICES</h3>
+          <ul class="space-y-3">
+            <li><a href="/contact" class="text-sm hover:underline">Contact Us</a></li>
+            <li><a href="/customer-service" class="text-sm hover:underline">Customer Service</a></li>
+            <li><a href="/find-store" class="text-sm hover:underline">Find Store</a></li>
+            <li><a href="/book-appointment" class="text-sm hover:underline">Book appointment</a></li>
+            <li><a href="/shipping-returns" class="text-sm hover:underline">Shipping & Returns</a></li>
+          </ul>
+        </div>
+  
+        {/* Column 4: Sign Up */}
+        <div>
+          <h3 class="font-medium text-base uppercase mb-4">SIGN UP FOR EMAILS</h3>
+          <p class="text-sm mb-4">Enjoy 15% off* your first order when sign up to our newsletter</p>
+          
+          <form class="flex mb-6">
+            <input 
+              type="email" 
+              placeholder="Your e-mail address" 
+              class="flex-grow px-3 py-2 text-sm bg-gray-100 border border-gray-200 focus:outline-none" 
+              required
+            />
+            <button 
+              type="submit" 
+              class="px-4 py-2 bg-black text-white text-sm uppercase font-medium"
+            >
+              Subscribe
+            </button>
+          </form>
+          
+          <div class="flex space-x-4">
+            <a href="#" aria-label="Facebook">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+            </a>
+            <a href="#" aria-label="Twitter">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+              </svg>
+            </a>
+            <a href="#" aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </a>
+            <a href="#" aria-label="Pinterest">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M8 20.5c5-2.5 8-8 6-14"></path>
+                <path d="M12 8c-1.5 0-3 1.5-3 3 0 1.5 1 2 1 2s-.5 3.5-.5 4.5c-1.5 0-3-1-3-1s1 4 4.5 4 3-4 3-4-.5-1.5-.5-2c2 0 3-1 3-2s-1-2-2.5-2c-1 0-2 .5-2 1"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      {/* Bottom Footer Section */}
+      <div class="mt-12 pt-4 border-t border-gray-300 flex flex-col md:flex-row justify-between items-center">
+        <div class="flex space-x-6 mb-4 md:mb-0">
+          <a href="/privacy-policy" class="text-xs hover:underline">Privacy Policy</a>
+          <a href="/help" class="text-xs hover:underline">Help</a>
+          <a href="/faqs" class="text-xs hover:underline">FAQs</a>
+        </div>
+        
+        <div class="text-xs mb-4 md:mb-0">© Nooni. All Rights Reserved.</div>
+        
+        <div class="flex space-x-2">
+          <img src="https://placehold.co/40x25" alt="American Express" class="h-6" />
+          <img src="https://placehold.co/40x25" alt="PayPal" class="h-6" />
+          <img src="https://placehold.co/40x25" alt="MasterCard" class="h-6" />
+          <img src="https://placehold.co/40x25" alt="Klarna" class="h-6" />
+          <img src="https://placehold.co/40x25" alt="Visa" class="h-6" />
+        </div>
+      </div>
+    </div>
+    <a href="#top" class="fixed bottom-6 right-6 bg-black text-white p-3 rounded-full">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 19V5M5 12l7-7 7 7"/>
+      </svg>
+    </a>
+  </footer>
+  
+  <script>
+    // Scroll to top functionality
+    document.querySelector('a[href="#top"]').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  
+    // Newsletter subscription form handling
+    const form = document.querySelector('form');
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = e.target.querySelector('input[type="email"]').value;
+        
+        // Here you would typically send the email to your backend
+        console.log('Subscribing email:', email);
+        
+        // Show success message (you can customize this)
+        alert('Thank you for subscribing to our newsletter!');
+        
+        // Reset form
+        e.target.reset();
+      });
+    }
+  </script>
