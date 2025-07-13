@@ -26,6 +26,7 @@
     "my-astro-project": "file:",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "swiper": "^11.2.10",
     "tailwindcss": "^4.1.6"
   }
 }

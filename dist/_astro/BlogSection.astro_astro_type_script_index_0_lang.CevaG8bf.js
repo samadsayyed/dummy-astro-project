@@ -1,0 +1,1 @@
+import e from"https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js";document.addEventListener("DOMContentLoaded",function(){new e(".swiper-container",{spaceBetween:30,slidesPerView:1,navigation:{nextEl:".swiper-button-next",prevEl:".swiper-button-prev"},breakpoints:{640:{slidesPerView:2},1024:{slidesPerView:1.3}}})});

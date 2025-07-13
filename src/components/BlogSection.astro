@@ -1,7 +1,4 @@
 ---
-// Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
 import { getAllBlogs } from '../utils/blogUtils';
 
 // Get blog posts from the utility function
@@ -10,7 +7,10 @@ const blogPosts = getAllBlogs();
 const featuredPosts = blogPosts.slice(0, 5);
 ---
 
-<section class="py-16 px-4 overflow-x-clip">
+<!-- Add Swiper CSS via CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<section class="py-16 px-4 overflow-x-clip"> 
   <div class="max-w-7xl mx-auto">
     <div class="flex justify-between items-center mb-8">
       <h2 class="text-3xl font-bold">OUR BLOG</h2>
@@ -89,24 +89,26 @@ const featuredPosts = blogPosts.slice(0, 5);
 </style>
 
 <script>
-  import Swiper from 'swiper';
-  import { Navigation } from 'swiper/modules';
+  // Import Swiper from CDN
+  import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js';
 
-  const swiper = new Swiper('.swiper-container', {
-    modules: [Navigation],
-    spaceBetween: 30,
-    slidesPerView: 1,
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-    breakpoints: {
-      640: {
-        slidesPerView: 2,
+  // Initialize Swiper when the DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    const swiper = new Swiper('.swiper-container', {
+      spaceBetween: 30,
+      slidesPerView: 1,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
       },
-      1024: {
-        slidesPerView: 1.3,
+      breakpoints: {
+        640: {
+          slidesPerView: 2,
+        },
+        1024: {
+          slidesPerView: 1.3,
+        },
       },
-    },
+    });
   });
 </script>
