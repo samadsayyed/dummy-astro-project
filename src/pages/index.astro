@@ -2,7 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import Scene3D from '../components/Scene3D';
 import CategorySection from '../components/CategorySection.astro';
-import ModernFurnitureShowcase from '../components/CardsSection';
+import ModernFurnitureShowcase from '../components/CardsSection.jsx';
+import CardsSection from '../components/CardsSection.astro';
 import BlogSection from '../components/BlogSection.astro';
 import VideoSection from '../components/VideoSection.astro';
 import Hero from '../components/Hero.astro';
@@ -12,6 +13,7 @@ import Hero from '../components/Hero.astro';
   <Hero/>
   <CategorySection />
   <ModernFurnitureShowcase client:load />
+  <CardsSection />
   <BlogSection />
   <VideoSection />
 </Layout>
