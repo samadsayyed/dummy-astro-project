@@ -5,30 +5,32 @@ import { productsService } from '../../api/productsService.js';
 let products = [];
 
 try {
-  const data = await productsService.getProducts(7);
-  // Transform the data to flatten variants for display
+  const data = await productsService.getProducts();
+
   products = data.map(product => {
-    const firstVariant = product.variants[0];
     return {
       id: product.id,
       name: product.name,
-      sku: firstVariant.sku || product.sku,
-      price: parseFloat(firstVariant.price),
-      discount_price: firstVariant.discount_price ? parseFloat(firstVariant.discount_price) : null,
-      in_stock: firstVariant.in_stock,
-      stock_quantity: firstVariant.stock_quantity,
-      gallery: firstVariant.images || [],
-      variants: product.variants,
-      has_variants: product.has_variants,
-      isHot: firstVariant.discount_price ? true : false,
-      isOnSale: firstVariant.discount_price ? true : false
+      sku: product.sku,
+      price: parseFloat(product.price),
+      discount_price: product.discount_price ? parseFloat(product.discount_price) : null,
+      in_stock: product.in_stock,
+      stock_quantity: product.stock_quantity,
+      gallery: product.gallery || [],
+      has_variants: product.has_variants || false,
+      variants: [], // Keeping empty since you're not grouping anymore
+      isHot: product.discount_price ? true : false,
+      isOnSale: product.discount_price ? true : false
     };
   });
+
+
 } catch (error) {
   console.error('Error fetching products:', error);
   products = [];
 }
 ---
+
 
 <Layout title="Shop | Bablon">
   <section class="container mx-auto px-4 py-8">
@@ -118,5 +120,7 @@ try {
       localStorage.setItem('cart', JSON.stringify(cart));
       alert(`✅ ${product.name} added to cart!`);
     }
+
+    
   </script>
 </Layout>

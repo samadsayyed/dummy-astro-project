@@ -1,7 +1,7 @@
 import apiClient from "./axiosConfig";
 
 const productsService = {
-  getProducts: async (limit = 20) => {
+  getProducts: async (limit = 1000) => {
     try {
       const response = await apiClient.get(`/products?limit=${limit}`);
       return response.data;

@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Scene3D from '../components/Scene3D';
 import CategorySection from '../components/CategorySection.astro';
-import ModernFurnitureShowcase from '../components/CardsSection.jsx';
+import ModernFurnitureShowcase from '../components/CardsSection.astro';
 import CardsSection from '../components/CardsSection.astro';
 import BlogSection from '../components/BlogSection.astro';
 import VideoSection from '../components/VideoSection.astro';
@@ -12,7 +12,7 @@ import Hero from '../components/Hero.astro';
 <Layout title="Home | Bablon">
   <Hero/>
   <CategorySection />
-  <ModernFurnitureShowcase client:load />
+  <!-- <ModernFurnitureShowcase client:load /> -->
   <CardsSection />
   <BlogSection />
   <VideoSection />
