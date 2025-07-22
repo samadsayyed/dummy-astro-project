@@ -7,30 +7,42 @@ let products = [];
 try {
   const data = await productsService.getProducts();
 
+  console.log(data,"---------------------");
+  
+
   products = data.map(product => {
     return {
       id: product.id,
       name: product.name,
       sku: product.sku,
+      slug: product.slug,
       price: parseFloat(product.price),
       discount_price: product.discount_price ? parseFloat(product.discount_price) : null,
       in_stock: product.in_stock,
       stock_quantity: product.stock_quantity,
       gallery: product.gallery || [],
       has_variants: product.has_variants || false,
-      variants: [], // Keeping empty since you're not grouping anymore
+      attributes: product.attributes || {},
       isHot: product.discount_price ? true : false,
       isOnSale: product.discount_price ? true : false
     };
   });
 
-
 } catch (error) {
   console.error('Error fetching products:', error);
   products = [];
 }
----
 
+// Helper function to format price
+const formatPrice = (price) => {
+  return parseFloat(price).toLocaleString('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  });
+};
+---
 
 <Layout title="Shop | Bablon">
   <section class="container mx-auto px-4 py-8">
@@ -43,7 +55,7 @@ try {
         <div class="relative bg-gray-100 flex flex-col group transition-all duration-300">
           <!-- Product Image -->
           <div class="relative overflow-hidden">
-            {(product.in_stock === false)
+            {(product.in_stock === false || product.stock_quantity <= 0)
               ? <span class="absolute top-2 left-2 bg-gray-600 text-white text-xs px-2 py-1">OUT OF STOCK</span>
               : (
                 <div class="absolute top-2 left-2 flex gap-1 z-10">
@@ -63,7 +75,7 @@ try {
             <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 transition-all duration-300 bg-transparent group-hover:bg-black/10">
               <div class="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <!-- Quick View -->
-                <a href={`/products/${product.id}`} class="bg-white p-2 rounded-full shadow hover:bg-gray-100 transition transform hover:scale-110">
+                <a href={`/shop/${product.slug}`} class="bg-white p-2 rounded-full shadow hover:bg-gray-100 transition transform hover:scale-110">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
@@ -80,8 +92,9 @@ try {
               <button
                 class="absolute bottom-0 w-full py-2 text-center text-white font-medium bg-black hover:bg-red-600 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
                 onclick={`addToCart(${JSON.stringify(product)})`}
+                disabled={!product.in_stock || product.stock_quantity <= 0}
               >
-                ADD TO CART
+                {product.in_stock && product.stock_quantity > 0 ? 'ADD TO CART' : 'OUT OF STOCK'}
               </button>
             </div>
 
@@ -95,17 +108,26 @@ try {
 
           <!-- Product Info -->
           <div class="p-4">
-            <h3 class="font-medium text-lg">{product.name}</h3>
+            <a href={`/shop/${product.slug}`} class="block">
+              <h3 class="font-medium text-lg hover:text-gray-600 transition-colors">{product.name}</h3>
+            </a>
             <div class="mt-2 flex items-center">
-              <span class="font-bold">₹{(product.discount_price || product.price).toLocaleString()}</span>
+              <span class="font-bold">{formatPrice(product.discount_price || product.price)}</span>
               {product.discount_price && (
                 <>
-                  <span class="ml-2 text-sm line-through text-gray-500">₹{product.price.toLocaleString()}</span>
+                  <span class="ml-2 text-sm line-through text-gray-500">{formatPrice(product.price)}</span>
                 </>
               )}
             </div>
-            {product.has_variants && product.variants.length > 1 && (
-              <p class="text-sm text-gray-600 mt-1">{product.variants.length} variants available</p>
+            {product.has_variants && (
+              <p class="text-sm text-gray-600 mt-1">Variants available</p>
+            )}
+            {product.attributes && Object.keys(product.attributes).length > 0 && (
+              <div class="mt-2">
+                {Object.entries(product.attributes).slice(0, 2).map(([key, value]) => (
+                  <span class="inline-block bg-gray-200 text-xs px-2 py-1 rounded mr-1 mb-1">{key}: {value}</span>
+                ))}
+              </div>
             )}
           </div>
         </div>
@@ -115,12 +137,15 @@ try {
 
   <script is:inline>
     function addToCart(product) {
+      if (!product.in_stock || product.stock_quantity <= 0) {
+        alert('❌ Product is out of stock!');
+        return;
+      }
+      
       let cart = JSON.parse(localStorage.getItem('cart')) || [];
       cart.push(product);
       localStorage.setItem('cart', JSON.stringify(cart));
       alert(`✅ ${product.name} added to cart!`);
     }
-
-    
   </script>
 </Layout>
