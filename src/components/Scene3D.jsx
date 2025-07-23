@@ -17,7 +17,6 @@ function Sofa() {
   const { scrollYProgress } = useScroll({ container: scrollContainer });
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    console.log(latest, "Scroll progress");
   });
 
   useFrame((state) => {

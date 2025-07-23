@@ -6,11 +6,9 @@ import { productsService } from '../../api/productsService.js';
 // Generate static paths for all products
 export async function getStaticPaths() {
     const data = await productsService.getProducts();   
-    console.log("Products fetched:", data);
     return data.map(product => {
         // Generate slug from product name or use ID if no slug exists
         const slug = product.slug || product.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || product.id.toString();
-        console.log(`Generating path for product: ${product.name} with slug: ${slug}`);
         return {
             params: { slug },
             props: { product }
@@ -25,26 +23,16 @@ const { product } = Astro.props;
 let detailedProduct = product;
 try {
   const apiUrl = `https://admin.bablon.in/public/api/products/slug/${product.slug}`;
-  console.log("Fetching from API:", apiUrl);
   
   const response = await fetch(apiUrl);
   if (response.ok) {
     detailedProduct = await response.json();
-    console.log("Detailed Product Data:", detailedProduct);
   } else {
     console.warn("Failed to fetch detailed product data, using basic product data");
   }
 } catch (error) {
   console.error("Error fetching detailed product data:", error);
-  console.log("Using basic product data as fallback");
 }
-
-console.log("=========================================");
-console.log("Final Product Data:", detailedProduct);
-console.log("Has Variants:", detailedProduct.has_variants);
-console.log("Variants Array:", detailedProduct.variants);
-console.log("First Variant:", detailedProduct.variants?.[0]);
-console.log("=========================================  ");
 
 
 // Helper function to format price

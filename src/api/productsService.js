@@ -45,12 +45,9 @@ const productsService = {
   // Function to generate static paths for Astro
   getStaticPaths: async () => {
     try {
-      console.log("🔄 Generating static paths...");
       const products = await productsService.getAllProducts();
-      console.log("📦 Fetched products:", products.length);
       
       const paths = products.map(product => {
-        console.log("🔗 Creating path for:", product.slug);
         return {
           params: {
             slug: product.slug
@@ -74,7 +71,6 @@ const productsService = {
         };
       });
       
-      console.log("✅ Generated paths:", paths.length);
       return paths;
     } catch (error) {
       console.error("❌ Error generating static paths:", error);

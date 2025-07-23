@@ -32,7 +32,6 @@ const saveCart = (cart) => {
 // Add item to cart
 const addToCart = (product, quantity = 1) => {
   const cart = getCart();
-  console.log(cart,"cart");
   
   // Ensure cart.items exists
   if (!cart.items) {
