@@ -1,0 +1,112 @@
+import { b as createAstro, c as createComponent, r as renderTemplate, a as renderComponent, e as renderScript, d as addAttribute, F as Fragment, m as maybeRenderHead, u as unescapeHTML } from '../../chunks/astro/server_BDYBIJ9N.mjs';
+import 'kleur/colors';
+import { $ as $$Layout } from '../../chunks/Layout_Bqao17MK.mjs';
+import { p as productsService } from '../../chunks/productsService_B-1gmcsj.mjs';
+export { renderers } from '../../renderers.mjs';
+
+var __freeze = Object.freeze;
+var __defProp = Object.defineProperty;
+var __template = (cooked, raw) => __freeze(__defProp(cooked, "raw", { value: __freeze(cooked.slice()) }));
+var _a;
+const $$Astro = createAstro("https://bablon.in/");
+async function getStaticPaths() {
+  const data = await productsService.getProducts();
+  return data.map((product) => {
+    const slug = product.slug || product.name?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || product.id.toString();
+    return {
+      params: { slug },
+      props: { product }
+    };
+  });
+}
+const $$slug = createComponent(async ($$result, $$props, $$slots) => {
+  const Astro2 = $$result.createAstro($$Astro, $$props, $$slots);
+  Astro2.self = $$slug;
+  const { product } = Astro2.props;
+  let detailedProduct = product;
+  try {
+    const apiUrl = `https://admin.bablon.in/public/api/products/slug/${product.slug}`;
+    const response = await fetch(apiUrl);
+    if (response.ok) {
+      detailedProduct = await response.json();
+    } else {
+      console.warn("Failed to fetch detailed product data, using basic product data");
+    }
+  } catch (error) {
+    console.error("Error fetching detailed product data:", error);
+  }
+  const formatPrice = (price) => {
+    return parseFloat(price).toLocaleString("en-IN", {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+  };
+  const defaultVariant = detailedProduct.variants?.[0] || null;
+  const currentVariant = defaultVariant || {
+    id: detailedProduct.id,
+    sku: detailedProduct.sku,
+    price: detailedProduct.price,
+    discount_price: detailedProduct.discount_price,
+    in_stock: detailedProduct.in_stock,
+    stock_quantity: detailedProduct.stock_quantity,
+    attributes: detailedProduct.attributes,
+    images: detailedProduct.gallery || []
+  };
+  const relatedProducts = [
+    {
+      name: "Led Adjustable Brass Floor Lamp",
+      price: 224,
+      originalPrice: 299,
+      image: "https://placehold.co/300x300",
+      status: "SOLD OUT"
+    },
+    {
+      name: "Solid Wood Shoes Cabinet",
+      price: 1199,
+      originalPrice: 1499,
+      image: "https://placehold.co/300x300",
+      status: "SALE"
+    },
+    {
+      name: "Living Room Furniture Chair",
+      price: 3049,
+      originalPrice: 3499,
+      image: "https://placehold.co/300x300",
+      status: "SALE"
+    },
+    {
+      name: "Swivel Upholstered Fabric Chair",
+      price: 329,
+      originalPrice: 449,
+      image: "https://placehold.co/300x300",
+      status: "SALE"
+    }
+  ];
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": `${product.name} | Bablon` }, { "default": ($$result2) => renderTemplate(_a || (_a = __template(['  <script id="product-data" type="application/json">', "<\/script> ", '<div class="container mx-auto px-4 py-8"> <!-- Breadcrumb --> <nav class="text-sm mb-8"> <ol class="flex items-center space-x-2"> <li><a href="/" class="text-gray-500 hover:text-gray-700">Home</a></li> <li><span class="text-gray-500">/</span></li> <li><a href="/shop" class="text-gray-500 hover:text-gray-700">Shop</a></li> <li><span class="text-gray-500">/</span></li> <li><a', ' class="text-gray-500 hover:text-gray-700">', '</a></li> <li><span class="text-gray-500">/</span></li> <li><span class="text-gray-900">', '</span></li> </ol> </nav> <!-- Product Section --> <div class="grid grid-cols-1 md:grid-cols-2 gap-8"> <!-- Product Images --> <div class="space-y-4"> <div class="relative"> ', ' <img id="mainImage"', "", ' class="w-full rounded-lg shadow-lg"> </div> <div class="grid grid-cols-4 gap-4"> ', ' </div> </div> <!-- Product Info --> <div class="space-y-6"> <div> <h1 class="text-3xl font-bold text-gray-900 mb-2">', '</h1> <p class="text-sm text-gray-500">SKU: ', '</p> </div> <div class="flex items-center space-x-4"> <div class="flex items-center"> ', ' <span class="ml-2 text-gray-600">(12 reviews)</span> </div> <span', "> ", ' </span> </div> <div class="flex items-center space-x-4"> <span class="text-3xl font-bold text-gray-900"> ', " </span> ", " ", ' </div> <p class="text-gray-600 leading-relaxed">', "</p> <!-- Variant Selection --> ", ' <!-- Stock Information --> <div class="bg-gray-50 p-4 rounded-lg"> <div class="flex items-center justify-between"> <span class="text-sm text-gray-600">Available Quantity:</span> <span class="font-medium text-gray-900">', ' units</span> </div> </div> <div class="flex items-center space-x-4"> <div class="flex items-center border rounded-md"> <button class="px-3 py-2 border-r hover:bg-gray-100 transition-colors" id="decrementBtn">-</button> <input type="number" value="1" min="1"', ' class="w-16 text-center focus:outline-none" id="quantityInput"> <button class="px-3 py-2 border-l hover:bg-gray-100 transition-colors" id="incrementBtn">+</button> </div> <button class="flex-1 bg-gray-900 text-white py-3 px-6 rounded-md hover:bg-gray-800 disabled:bg-gray-400 transition-colors font-medium"', ' id="addToCartBtn"> ', ' </button> </div> <button class="w-full bg-white border-2 border-gray-900 text-gray-900 py-3 px-6 rounded-md hover:bg-gray-50 transition-colors font-medium">BUY NOW</button> <div class="flex items-center space-x-4 pt-4"> <button class="flex items-center text-gray-500 hover:text-gray-700 transition-colors"> <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path> </svg>\nAdd to wishlist\n</button> <button class="flex items-center text-gray-500 hover:text-gray-700 transition-colors"> <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path> </svg>\nShare\n</button> </div> </div> </div> <!-- Product Details Tabs --> <div class="mt-16"> <div class="border-b"> <nav class="-mb-px flex space-x-8"> <a href="#details" class="border-b-2 border-gray-900 py-4 px-1 text-sm font-medium text-gray-900">Details</a> <a href="#specifications" class="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">Specifications</a> <a href="#delivery" class="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">Delivery & Returns</a> <a href="#reviews" class="border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">Reviews (12)</a> </nav> </div> <div class="py-8"> <div id="details" class="space-y-6"> <div> <h3 class="text-lg font-semibold mb-4">Product Description</h3> <div class="text-gray-600 leading-relaxed space-y-4"> ', " </div> </div> ", ' </div> </div> </div> <!-- Related Products --> <div class="mt-16"> <h2 class="text-2xl font-bold mb-8">RELATED PRODUCTS</h2> <div class="grid grid-cols-1 md:grid-cols-4 gap-8"> ', " </div> </div> </div> "])), unescapeHTML(JSON.stringify({
+    id: detailedProduct.id,
+    name: detailedProduct.name,
+    sku: detailedProduct.sku,
+    description: detailedProduct.description || "",
+    has_variants: detailedProduct.has_variants,
+    variants: detailedProduct.variants || [],
+    category: detailedProduct.category || {}
+  })), maybeRenderHead(), addAttribute(`/shop/${detailedProduct.category?.name?.toLowerCase().replace(/\s+/g, "-")}`, "href"), detailedProduct.category?.name, detailedProduct.name, currentVariant?.discount_price && renderTemplate`${renderComponent($$result2, "Fragment", Fragment, {}, { "default": ($$result3) => renderTemplate` <span class="absolute top-4 left-4 bg-red-600 text-white px-2 py-1 text-sm font-medium">HOT</span> <span class="absolute top-4 left-16 bg-gray-900 text-white px-2 py-1 text-sm font-medium">SALE</span> ` })}`, addAttribute(currentVariant?.images?.[0] ?? "https://placehold.co/600x600", "src"), addAttribute(detailedProduct.name, "alt"), currentVariant?.images?.slice(0, 4).map((image, index) => renderTemplate`<img${addAttribute(image, "src")}${addAttribute(`${detailedProduct.name} thumbnail ${index + 1}`, "alt")} class="w-full rounded-lg cursor-pointer hover:opacity-75 transition-opacity thumbnail-image"${addAttribute(image, "data-image")}>`), detailedProduct.name, detailedProduct.sku, Array.from({ length: 5 }).map((_, index) => renderTemplate`<svg${addAttribute(`w-5 h-5 ${index < 4 ? "text-yellow-400" : "text-gray-300"}`, "class")} fill="currentColor" viewBox="0 0 20 20"> <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path> </svg>`), addAttribute(`px-2 py-1 text-xs font-medium rounded-full ${currentVariant?.in_stock && currentVariant?.stock_quantity > 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`, "class"), currentVariant?.in_stock && currentVariant?.stock_quantity > 0 ? "In Stock" : "Out of Stock", currentVariant ? formatPrice(currentVariant.discount_price || currentVariant.price) : "No Price Available", currentVariant?.discount_price && renderTemplate`<span class="text-lg text-gray-500 line-through">${formatPrice(currentVariant.price)}</span>`, currentVariant?.discount_price && renderTemplate`<span class="bg-red-100 text-red-800 px-2 py-1 text-sm font-medium rounded"> ${Math.round((parseFloat(currentVariant.price) - parseFloat(currentVariant.discount_price)) / parseFloat(currentVariant.price) * 100)}% OFF
+</span>`, detailedProduct.description || "No description available for this product.", detailedProduct.has_variants && detailedProduct.variants && detailedProduct.variants.length > 0 && renderTemplate`<div class="space-y-4"> <h3 class="font-medium text-gray-900">Select Color:</h3> <div class="flex flex-wrap gap-3"> ${detailedProduct.variants.map((variant, index) => renderTemplate`<button${addAttribute(`variant-btn px-4 py-2 border-2 rounded-lg text-sm font-medium transition-all hover:border-gray-900 ${index === 0 ? "border-gray-900 bg-gray-900 text-white" : "border-gray-300"}`, "class")}${addAttribute(variant.id, "data-variant-id")}${addAttribute(index, "data-variant-index")}> ${variant.attributes?.Color || `Variant ${index + 1}`} </button>`)} </div> </div>`, currentVariant?.stock_quantity || 0, addAttribute(currentVariant?.stock_quantity || 1, "max"), addAttribute(!currentVariant?.in_stock || currentVariant?.stock_quantity <= 0, "disabled"), currentVariant?.in_stock && currentVariant?.stock_quantity > 0 ? "ADD TO CART" : "OUT OF STOCK", detailedProduct.description ? detailedProduct.description.split("\n").map((paragraph, index) => paragraph.trim() && renderTemplate`<p${addAttribute(index, "key")}>${paragraph.trim()}</p>`) : renderTemplate`<p>No description available for this product.</p>`, detailedProduct.has_variants && renderTemplate`<div> <h3 class="text-lg font-semibold mb-4">Available Variants</h3> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"> ${detailedProduct.variants?.map((variant, index) => renderTemplate`<div class="border rounded-lg p-4 hover:border-gray-900 transition-colors"> <h4 class="font-medium text-gray-900 mb-2">${variant.attributes?.Color || `Variant ${index + 1}`}</h4> <div class="text-sm text-gray-600 space-y-1"> <p>Price: ${formatPrice(variant.discount_price || variant.price)}</p> ${variant.discount_price && renderTemplate`<p class="text-red-600">Save: ${Math.round((parseFloat(variant.price) - parseFloat(variant.discount_price)) / parseFloat(variant.price) * 100)}%</p>`} <p>Stock: ${variant.stock_quantity} units</p> <p>SKU: ${variant.sku}</p> </div> </div>`)} </div> </div>`, relatedProducts.map((product2, index) => renderTemplate`<div class="group relative"> <div class="relative"> ${product2.status && renderTemplate`<span${addAttribute(`absolute top-4 left-4 px-2 py-1 text-sm text-white ${product2.status === "SALE" ? "bg-gray-900" : "bg-red-600"}`, "class")}>${product2.status}</span>`} <img${addAttribute(product2.image, "src")}${addAttribute(product2.name, "alt")} class="w-full rounded-lg"> <button class="absolute right-4 top-4 text-gray-500 hover:text-gray-700"> <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path> </svg> </button> </div> <h3 class="mt-4 text-sm text-gray-700">${product2.name}</h3> <div class="mt-1 flex items-center space-x-2"> <span class="text-lg font-medium text-gray-900">₹${product2.price}</span> <span class="text-sm text-gray-500 line-through">₹${product2.originalPrice}</span> </div> </div>`)) })} ${renderScript($$result, "D:/Samad/Coding_Playground/Projects/Web/Professional/Bablon/Frontend/src/pages/shop/[slug].astro?astro&type=script&index=0&lang.ts")}`;
+}, "D:/Samad/Coding_Playground/Projects/Web/Professional/Bablon/Frontend/src/pages/shop/[slug].astro", undefined);
+
+const $$file = "D:/Samad/Coding_Playground/Projects/Web/Professional/Bablon/Frontend/src/pages/shop/[slug].astro";
+const $$url = "/shop/[slug]";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: $$slug,
+  file: $$file,
+  getStaticPaths,
+  url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };

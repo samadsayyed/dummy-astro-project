@@ -1,14 +1,17 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import ProductCard from "../../components/ProductCard.astro";
+import ShopContainer from "../../components/ShopContainer";
 import { productsService } from "../../api/productsService.js";
+import CategoriesService from "../../api/categoriesService.js";
+import "../../styles/shop.css";
 
 let products = [];
+let categories = [];
 
 try {
-  const data = await productsService.getProducts();
-
-  products = data.map((product: any) => {
+  // Fetch products
+  const productData = await productsService.getProducts();
+  products = productData.map((product: any) => {
     return {
       id: product.id,
       name: product.name,
@@ -21,26 +24,160 @@ try {
       in_stock: product.in_stock,
       stock_quantity: product.stock_quantity,
       attributes: product.attributes || {},
+      category_id: product.category_id || null,
+      created_at: product.created_at || new Date().toISOString(),
     };
   });
+
+  // Fetch categories for filtering
+  const categoryData = await CategoriesService.getAll();
+  categories = categoryData.map((category: any) => ({
+    id: category.id,
+    name: category.name,
+    slug: category.slug || category.name.toLowerCase().replace(/\s+/g, '-')
+  }));
 } catch (error) {
-  console.error("Error fetching products:", error);
+  console.error("Error fetching data:", error);
   products = [];
+  categories = [];
 }
 ---
 
 <Layout title="Shop | Bablon">
-  <section class="container mx-auto px-4 py-8">
-    <div
-      class="flex flex-col md:flex-row md:items-center md:justify-between mb-6"
-    >
-      <h2 class="text-2xl font-bold mb-4 md:mb-0">Products</h2>
-    </div>
-
-    <div
-      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-    >
-      {products.map((product: any) => <ProductCard product={product} />)}
-    </div>
-  </section>
+  <ShopContainer 
+    initialProducts={products} 
+    categories={categories} 
+    itemsPerPage={12}
+    client:load
+  />
 </Layout>
+
+<style>
+  /* Additional global styles for enhanced aesthetics */
+  :global(body) {
+    background-color: #f9fafb;
+  }
+
+  /* Custom scrollbar for better UX */
+  :global(::-webkit-scrollbar) {
+    width: 6px;
+  }
+
+  :global(::-webkit-scrollbar-track) {
+    background: #f1f1f1;
+  }
+
+  :global(::-webkit-scrollbar-thumb) {
+    background: #c1c1c1;
+  }
+
+  :global(::-webkit-scrollbar-thumb:hover) {
+    background: #a8a8a8;
+  }
+
+  /* Smooth transitions for all interactive elements */
+  :global(*) {
+    transition-property: color, background-color, border-color, transform, opacity, box-shadow;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+
+  /* Focus styles for accessibility */
+  :global(:focus-visible) {
+    outline: 1px solid #6b7280;
+    outline-offset: 1px;
+  }
+
+  /* Enhanced button styles */
+  :global(button:focus) {
+    outline: none;
+  }
+
+  :global(button:focus-visible) {
+    outline: 1px solid #6b7280;
+    outline-offset: 1px;
+  }
+
+  /* Smooth animations for loading states */
+  :global(@keyframes spin) {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  :global(@keyframes pulse) {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  :global(@keyframes fadeIn) {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Animation classes */
+  :global(.animate-spin) {
+    animation: spin 1s linear infinite;
+  }
+
+  :global(.animate-pulse) {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  :global(.animate-fadeIn) {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  /* Custom utility classes for better spacing */
+  :global(.container) {
+    max-width: 1200px;
+  }
+
+  /* Enhanced mobile experience */
+  @media (max-width: 768px) {
+    :global(.container) {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    :global(.no-print) {
+      display: none !important;
+    }
+  }
+</style>
+
+<!-- Performance optimizations -->
+<script>
+  // Preload critical images
+  const preloadImages = () => {
+    const images = document.querySelectorAll('img[data-src]');
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          img.src = img.dataset.src;
+          img.classList.remove('lazy');
+          observer.unobserve(img);
+        }
+      });
+    });
+
+    images.forEach(img => imageObserver.observe(img));
+  };
+
+  // Initialize on DOM content loaded
+  document.addEventListener('DOMContentLoaded', preloadImages);
+</script>
