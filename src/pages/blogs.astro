@@ -1,31 +1,82 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getAllBlogs } from '../utils/blogUtils';
+import BlogCard from '../components/BlogCard.astro';
 
 // Get all blogs for the listing page
 const blogs = getAllBlogs();
 ---
 
 <Layout title="Blog | Bablon">
-  <div class="container mx-auto px-4 py-8">
-    <h1 class="text-center text-4xl font-bold mb-8">Blog Masonry</h1>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      {blogs.map((blog, index) => (
-        <div class="group relative">
-          <img src={blog.image} alt={blog.title} class="w-full rounded-lg" />
-          <div class="mt-4">
-            <span class="text-sm text-gray-500">{blog.date}</span>
-            <h3 class="text-lg font-medium text-gray-900 group-hover:text-gray-700">
-              <a href={`/blogs/${index + 1}`}>{blog.title}</a>
-            </h3>
-            <p class="text-sm text-gray-500">{blog.description}</p>
-            <a href={`/blogs/${index + 1}`} class="text-blue-500 hover:text-blue-700">Read More</a>
-          </div>
+  <div class="py-24 px-4 bg-white text-black">
+    <div class="max-w-7xl mx-auto">
+      <!-- Header Section -->
+      <div class="text-center mb-20">
+        <div class="inline-block mb-6">
+          <span class="text-xs font-mono tracking-widest text-gray-600 uppercase">Insights</span>
         </div>
-      ))}
-    </div>
-    <div class="text-center mt-8">
-      <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700">Load More</button>
+        <h1 class="text-5xl md:text-7xl font-light text-black mb-6 tracking-tight">
+          BLOG
+          <span class="block text-2xl md:text-3xl font-light text-gray-600 mt-2 tracking-widest">PERSPECTIVES</span>
+        </h1>
+        <div class="w-24 h-px bg-gradient-to-r from-transparent via-black to-transparent mx-auto"></div>
+        <p class="text-gray-600 text-lg mt-8 max-w-2xl mx-auto font-light">
+          Discover the latest trends, tips, and insights in furniture design and home styling
+        </p>
+      </div>
+
+      <!-- Blog Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        {blogs.map((blog) => (
+          <BlogCard post={blog} showAuthor={true} />
+        ))}
+      </div>
+
+      <!-- Load More Button -->
+      <div class="text-center">
+        <button class="group inline-flex items-center px-12 py-4 bg-black text-white font-mono tracking-wider text-sm uppercase hover:bg-gray-800 transition-all duration-300 border border-black hover:border-gray-800">
+          Load More Articles
+          <svg class="w-4 h-4 ml-3 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 </Layout>
+
+<style>
+  /* Custom scrollbar for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f9fafb;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Custom focus styles */
+  .group:focus-within {
+    outline: 1px solid #000000;
+    outline-offset: 2px;
+  }
+  
+  /* Text selection */
+  ::selection {
+    background: rgba(0, 0, 0, 0.1);
+    color: black;
+  }
+</style>
