@@ -4,18 +4,22 @@ import Scene3D from '../components/Scene3D';
 import CategorySection from '../components/CategorySection.astro';
 import ModernFurnitureShowcase from '../components/CardsSection.astro';
 import CardsSection from '../components/CardsSection.astro';
+import BestDealsSection from '../components/BestDealsSection.astro';
 import PromotionalSection from '../components/PromotionalSection.astro';
 import BlogSection from '../components/BlogSection.astro';
 import VideoSection from '../components/VideoSection.astro';
 import Hero from '../components/Hero.astro';
+import WhyChooseUs from '../components/WhyChooseUs.astro';
 ---
 
 <Layout title="Home | Bablon">
   <Hero/>
   <CategorySection />
   <!-- <ModernFurnitureShowcase client:load /> -->
-  <CardsSection />
+  <BestDealsSection />
+  <WhyChooseUs />
   <PromotionalSection />
+  <CardsSection />
   <BlogSection />
   <VideoSection />
 </Layout>
