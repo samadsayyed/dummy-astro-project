@@ -3,7 +3,7 @@
 ---
 
 <footer class="border-t border-gray-200 pt-10 pb-5">
-    <div class="container mx-auto px-4">
+    <div class="container mx-auto px-4 md:px-8 lg:px-12">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Column 1: Logo and Contact Info */}
         <div>
@@ -11,9 +11,8 @@
             <img src="/logo.png" class=" h-11" alt="">
           </a>
           <div class="space-y-2 text-sm">
-            <p>Text: +00(234)23-45-666</p>
-            <p>Mon – Fri: 8 am – 8 pm</p>
-            <p>Sat – Sun: 8 am – 7 pm</p>
+            <p>Quality furniture for your home</p>
+            <p>Handcrafted with care</p>
           </div>
         </div>
   
@@ -21,10 +20,8 @@
         <div>
           <h3 class="font-medium text-base uppercase mb-4">ABOUT</h3>
           <ul class="space-y-3">
-            <li><a href="/our-story" class="text-sm hover:underline">Our Story</a></li>
-            <li><a href="/careers" class="text-sm hover:underline">Careers</a></li>
-            <li><a href="/influencers" class="text-sm hover:underline">Influencers</a></li>
-            <li><a href="/join-our-team" class="text-sm hover:underline">Join our team</a></li>
+            <li><a href="/about" class="text-sm hover:underline">About Us</a></li>
+            <li><a href="/blogs" class="text-sm hover:underline">Blog</a></li>
           </ul>
         </div>
   
@@ -33,17 +30,15 @@
           <h3 class="font-medium text-base uppercase mb-4">CUSTOMER SERVICES</h3>
           <ul class="space-y-3">
             <li><a href="/contact" class="text-sm hover:underline">Contact Us</a></li>
-            <li><a href="/customer-service" class="text-sm hover:underline">Customer Service</a></li>
-            <li><a href="/find-store" class="text-sm hover:underline">Find Store</a></li>
-            <li><a href="/book-appointment" class="text-sm hover:underline">Book appointment</a></li>
-            <li><a href="/shipping-returns" class="text-sm hover:underline">Shipping & Returns</a></li>
+            <li><a href="/shipping-delivery" class="text-sm hover:underline">Shipping & Delivery</a></li>
+            <li><a href="/cancellation-refund" class="text-sm hover:underline">Cancellation & Refund</a></li>
           </ul>
         </div>
   
         {/* Column 4: Sign Up */}
         <div>
           <h3 class="font-medium text-base uppercase mb-4">SIGN UP FOR EMAILS</h3>
-          <p class="text-sm mb-4">Enjoy 15% off* your first order when sign up to our newsletter</p>
+          <p class="text-sm mb-4">Stay updated with our latest products and offers</p>
           
           <form class="flex mb-6">
             <input 
@@ -93,18 +88,17 @@
       <div class="mt-12 pt-4 border-t border-gray-300 flex flex-col md:flex-row justify-between items-center">
         <div class="flex space-x-6 mb-4 md:mb-0">
           <a href="/privacy-policy" class="text-xs hover:underline">Privacy Policy</a>
-          <a href="/help" class="text-xs hover:underline">Help</a>
-          <a href="/faqs" class="text-xs hover:underline">FAQs</a>
+          <a href="/terms" class="text-xs hover:underline">Terms & Conditions</a>
         </div>
         
-        <div class="text-xs mb-4 md:mb-0">© Nooni. All Rights Reserved.</div>
+        <div class="text-xs mb-4 md:mb-0">© Bablon. All Rights Reserved.</div>
         
         <div class="flex space-x-2">
-          <img src="https://placehold.co/40x25" alt="American Express" class="h-6" />
-          <img src="https://placehold.co/40x25" alt="PayPal" class="h-6" />
-          <img src="https://placehold.co/40x25" alt="MasterCard" class="h-6" />
-          <img src="https://placehold.co/40x25" alt="Klarna" class="h-6" />
-          <img src="https://placehold.co/40x25" alt="Visa" class="h-6" />
+          <img src="https://placehold.co/40x25" alt="American Express" class="h-6 invisible" />
+          <img src="https://placehold.co/40x25" alt="PayPal" class="h-6 invisible" />
+          <img src="https://placehold.co/40x25" alt="MasterCard" class="h-6 invisible" />
+          <img src="https://placehold.co/40x25" alt="Klarna" class="h-6 invisible" />
+          <img src="https://placehold.co/40x25" alt="Visa" class="h-6 invisible" />
         </div>
       </div>
     </div>
@@ -117,25 +111,33 @@
   
   <script>
     // Scroll to top functionality
-    document.querySelector('a[href="#top"]').addEventListener('click', (e) => {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    const scrollToTopButton = document.querySelector('a[href="#top"]');
+    if (scrollToTopButton) {
+      scrollToTopButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
   
     // Newsletter subscription form handling
     const form = document.querySelector('form');
     if (form) {
       form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const email = e.target.querySelector('input[type="email"]').value;
+        const target = e.target as HTMLFormElement;
+        const emailInput = target.querySelector('input[type="email"]') as HTMLInputElement;
         
-        // Here you would typically send the email to your backend
-        
-        // Show success message (you can customize this)
-        alert('Thank you for subscribing to our newsletter!');
-        
-        // Reset form
-        e.target.reset();
+        if (emailInput) {
+          const email = emailInput.value;
+          
+          // Here you would typically send the email to your backend
+          
+          // Show success message (you can customize this)
+          alert('Thank you for subscribing to our newsletter!');
+          
+          // Reset form
+          target.reset();
+        }
       });
     }
   </script>
