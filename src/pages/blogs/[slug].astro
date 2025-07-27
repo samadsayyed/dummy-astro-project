@@ -1,29 +1,45 @@
 ---
 // Import necessary components and utilities
 import Layout from '../../layouts/Layout.astro';
-import { getBlogById, getRelatedBlogs } from '../../utils/blogUtils';
+import { getAllBlogs, getBlogBySlug, getRelatedBlogs } from '../../utils/blogUtils';
 
-// Generate static paths for all available blog posts (ID-based fallback)
+// Define blog type interface
+interface Blog {
+  id: number;
+  title: string;
+  date: string;
+  author: string;
+  authorImage: string;
+  category: string;
+  image: string;
+  description: string;
+  content: string;
+  slug: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Generate static paths for all available blog posts
 export async function getStaticPaths() {
   try {
-    const { getAllBlogs } = await import('../../utils/blogUtils.js');
     const blogs = await getAllBlogs();
     
-    // Only generate paths for blogs without slugs (as fallback)
-    const blogsWithoutSlugs = blogs.filter(blog => !blog.slug || blog.slug.trim() === '');
+    // Filter out blogs with empty or missing slugs
+    const validBlogs = blogs.filter((blog: Blog) => blog.slug && blog.slug.trim() !== '');
     
-    return blogsWithoutSlugs.map((blog) => ({
-      params: { id: blog.id.toString() },
-      props: { blog }
+    return validBlogs.map((blog: Blog) => ({
+      params: { slug: blog.slug },
+      props: { slug: blog.slug }
     }));
   } catch (error) {
-    console.error('Error generating static paths for blogs (ID-based):', error);
+    console.error('Error generating static paths for blogs:', error);
     return [];
   }
 }
 
-// Get the blog data from props (already fetched in getStaticPaths)
-const { blog } = Astro.props;
+// Get the slug from props and fetch blog data
+const { slug } = Astro.props;
+const blog: Blog | null = await getBlogBySlug(slug);
 
 // Get related posts
 const relatedPosts = blog ? await getRelatedBlogs(blog.id) : [];
@@ -31,6 +47,7 @@ const relatedPosts = blog ? await getRelatedBlogs(blog.id) : [];
 
 <Layout title={blog ? `${blog.title} - Bablon Blog` : 'Blog Post Not Found'}>
   <main class="max-w-4xl mx-auto px-4 py-12">
+    <!-- {JSON.stringify(blog)} -->
     {blog ? (
       <article class="bg-white rounded-lg shadow-md overflow-hidden">
         <!-- Hero Image -->
@@ -92,8 +109,8 @@ const relatedPosts = blog ? await getRelatedBlogs(blog.id) : [];
             <div class="mt-12 pt-6 border-t border-gray-200">
               <h2 class="text-2xl font-bold mb-6">Related Articles</h2>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedPosts.map((related: any) => (
-                  <a href={`/blogs/${related.slug || related.id}`} class="group">
+                {relatedPosts.map((related: Blog) => (
+                  <a href={`/blogs/${related.slug}`} class="group">
                     <div class="bg-gray-50 rounded-lg overflow-hidden">
                       <img 
                         src={related.image} 
@@ -144,4 +161,4 @@ const relatedPosts = blog ? await getRelatedBlogs(blog.id) : [];
   .prose li {
     margin-bottom: 0.5em;
   }
-</style> 
+</style>

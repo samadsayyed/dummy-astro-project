@@ -4,7 +4,7 @@ import { getAllBlogs } from '../utils/blogUtils';
 import BlogCard from '../components/BlogCard.astro';
 
 // Get all blogs for the listing page
-const blogs = getAllBlogs();
+const blogs = await getAllBlogs();
 ---
 
 <Layout title="Blog | Bablon">

@@ -3,7 +3,7 @@ import { getAllBlogs } from '../utils/blogUtils';
 import BlogCard from './BlogCard.astro';
 
 // Get blog posts from the utility function
-const blogPosts = getAllBlogs();
+const blogPosts = await getAllBlogs();
 // Limit to 6 posts for the homepage section
 const featuredPosts = blogPosts.slice(0, 6);
 ---

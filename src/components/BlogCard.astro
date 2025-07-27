@@ -10,6 +10,7 @@ export interface Props {
     category: string;
     image: string;
     description: string;
+    slug: string;
   };
   showAuthor?: boolean;
 }
@@ -51,7 +52,7 @@ const { post, showAuthor = true } = Astro.props;
     <!-- Content -->
     <div class="p-8">
       <h3 class="text-xl font-light text-gray-900 mb-4 group-hover:text-gray-700 transition-colors duration-300 leading-tight">
-        <a href={`/blogs/${post.id}`} class="hover:text-gray-700 transition-colors duration-300">
+        <a href={`/blogs/${post.slug || post.id}`} class="hover:text-gray-700 transition-colors duration-300">
           {post.title}
         </a>
       </h3>
@@ -72,7 +73,7 @@ const { post, showAuthor = true } = Astro.props;
           </div>
         )}
         <a
-          href={`/blogs/${post.id}`}
+          href={`/blogs/${post.slug || post.id}`}
           class="group/btn inline-flex items-center text-xs font-mono tracking-wider text-gray-800 hover:text-black transition-all duration-300 uppercase"
         >
           Read
