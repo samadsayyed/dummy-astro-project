@@ -17,6 +17,7 @@ const ShopContainer = ({
     availability: 'all',
     search: ''
   });
+  console.log(filters);
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,11 +56,11 @@ const ShopContainer = ({
 
     // Apply search filter
     if (filters.search) {
-      const searchTerm = filters.search.toLowerCase();
+      const searchTerm = filters.search?.toLowerCase();
       filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchTerm) ||
+        product.name?.toLowerCase().includes(searchTerm) ||
         (product.attributes && Object.values(product.attributes).some(attr => 
-          attr.toLowerCase().includes(searchTerm)
+          attr?.toLowerCase().includes(searchTerm)
         ))
       );
     }
@@ -67,7 +68,7 @@ const ShopContainer = ({
     // Apply category filter
     if (filters.category.length > 0) {
       filtered = filtered.filter(product =>
-        filters.category.includes(product.category_id)
+        filters.category.includes(product.category_name)
       );
     }
 
@@ -104,8 +105,8 @@ const ShopContainer = ({
             : parseFloat(b.price);
           break;
         case 'name':
-          aValue = a.name.toLowerCase();
-          bValue = b.name.toLowerCase();
+          aValue = a.name?.toLowerCase();
+          bValue = b.name?.toLowerCase();
           break;
         case 'created_at':
           aValue = new Date(a.created_at || 0);

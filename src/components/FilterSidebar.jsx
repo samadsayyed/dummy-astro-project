@@ -63,7 +63,7 @@ const FilterSidebar = ({
       {/* Mobile Backdrop */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={onToggle}
         />
       )}
@@ -196,15 +196,15 @@ const FilterSidebar = ({
             {expandedSections.category && (
               <div className="mt-4 space-y-3 max-h-48 overflow-y-auto">
                 {categories.length > 0 ? categories.map((category) => (
-                  <label key={category.id} className="flex items-center space-x-3 cursor-pointer">
+                  <label key={category.name} className="flex items-center space-x-3 cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={localFilters.category?.includes(category.id) || false}
+                      checked={localFilters.category?.includes(category.name) || false}
                       onChange={(e) => {
                         const currentCategories = localFilters.category || [];
                         const newCategories = e.target.checked
-                          ? [...currentCategories, category.id]
-                          : currentCategories.filter(id => id !== category.id);
+                          ? [...currentCategories, category.name]
+                          : currentCategories.filter(id => id !== category.name);
                         handleFilterChange('category', newCategories);
                       }}
                       className="w-4 h-4 text-black border-gray-300 focus:ring-black focus:ring-2"

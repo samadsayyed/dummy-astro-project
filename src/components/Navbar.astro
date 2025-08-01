@@ -6,12 +6,23 @@
 <nav class="relative">
   {/* Main Nav */}
   <div class="w-full py-4 px-4">
-    <div class="flex justify-between items-center w-full md:w-11/12 lg:w-10/12 mx-auto">
+    <div
+      class="flex justify-between items-center w-full md:w-11/12 lg:w-10/12 mx-auto"
+    >
       {/* Left buttons */}
       <div class="flex items-center space-x-4">
         <button id="mobile-menu-button" aria-label="Open menu">
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 6h16M4 12h16M4 18h16" />
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1"
+              d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
         </button>
         <!-- <button aria-label="Search">
@@ -24,27 +35,47 @@
       {/* Logo */}
       <div class="flex justify-center mx-auto">
         <a href="/" class="text-2xl font-light">
-          <img
-            src="/logo.png"
-            alt="nooni"
-            class="h-14"
-          />
+          <img src="/logo.png" alt="nooni" class="h-14" />
         </a>
       </div>
 
       {/* Right icons */}
       <div class="flex items-center space-x-4">
         <a href="/wishlist" class="relative" aria-label="Wishlist">
-          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          <svg
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1"
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+            ></path>
           </svg>
-          <span class="absolute -top-3 -right-3 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center p-[10px]">0</span>
+          <span
+            class="absolute -top-3 -right-3 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center p-[10px]"
+            >0</span
+          >
         </a>
         <a href="/cart" id="cart-button" class="relative" aria-label="Cart">
-          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          <svg
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
           </svg>
-          <span class="cart-count absolute -top-3 -right-3 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center hidden p-[10px]"></span>
+          <span
+            class="cart-count absolute -top-3 -right-3 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center hidden p-[10px]"
+          ></span>
         </a>
       </div>
     </div>
@@ -55,7 +86,8 @@
     id="mobile-overlay"
     class="fixed inset-0 bg-black/10 bg-opacity-50 z-40 hidden"
     aria-hidden="true"
-  ></div>
+  >
+  </div>
 
   {/* Mobile Menu - Closed by default (-translate-x-full) */}
   <div
@@ -65,40 +97,55 @@
     <div class="h-full overflow-y-auto">
       <div class="flex justify-end p-4">
         <button id="close-mobile-menu" aria-label="Close menu">
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M6 18L18 6M6 6l12 12" />
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1"
+              d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
       </div>
       <div class="px-6 py-4">
         <nav>
           <ul class="space-y-0">
-            {[
-              { label: 'Home', href: '/' },
-              { label: 'Shop', href: '/shop' },
-              // { label: 'Product', href: '/product' },
-              { label: 'Blog', href: '/blogs' },
-              { label: 'About', href: '/about' },
-              { label: 'Contact', href: '/contact' }
-            ].map((item) => (
-              <li>
-                <a
-                  href={item.href}
-                  class="flex items-center py-4 border-b border-gray-100 mobile-nav-link"
-                >
-                  <span class="text-black">{item.label}</span>
-                  <span class="ml-auto">
-                    <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path
-                        fill-rule="evenodd"
-                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                </a>
-              </li>
-            ))}
+            {
+              [
+                { label: "Home", href: "/" },
+                { label: "Shop", href: "/shop" },
+                // { label: 'Product', href: '/product' },
+                { label: "Blog", href: "/blogs" },
+                { label: "About", href: "/about" },
+                { label: "Contact", href: "/contact" },
+              ].map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    class="flex items-center py-4 border-b border-gray-100 mobile-nav-link"
+                  >
+                    <span class="text-black">{item.label}</span>
+                    <span class="ml-auto">
+                      <svg
+                        class="h-5 w-5 text-gray-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
           </ul>
         </nav>
       </div>
@@ -110,7 +157,8 @@
     id="cart-overlay"
     class="fixed inset-0 bg-black/10 bg-opacity-50 z-40 hidden"
     aria-hidden="true"
-  ></div>
+  >
+  </div>
 
   {/* Cart Sidebar - Closed by default (translate-x-full) */}
   <div
@@ -119,11 +167,26 @@
   >
     <div class="h-full flex flex-col">
       {/* Cart Header */}
-      <div class="flex justify-between items-center p-6 border-b border-gray-100">
+      <div
+        class="flex justify-between items-center p-6 border-b border-gray-100"
+      >
         <h2 class="text-lg">Cart</h2>
-        <button id="close-cart" class="hover:opacity-75" aria-label="Close cart">
-          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+        <button
+          id="close-cart"
+          class="hover:opacity-75"
+          aria-label="Close cart"
+        >
+          <svg
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
       </div>
@@ -131,14 +194,26 @@
       {/* Cart Items Container */}
       <div id="cart-items-container" class="flex-1 overflow-y-auto p-4">
         {/* Empty Cart Message - shown/hidden via JavaScript */}
-        <div id="empty-cart-message" class="flex-1 flex items-center justify-center p-6">
+        <div
+          id="empty-cart-message"
+          class="flex-1 flex items-center justify-center p-6"
+        >
           <div class="text-center">
-            <svg class="mx-auto h-10 w-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            <svg
+              class="mx-auto h-10 w-10 text-gray-300"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
             </svg>
             <p class="mt-3 text-gray-500 text-sm">Your cart is empty</p>
-            <a 
-              href="/shop" 
+            <a
+              href="/shop"
               class="mt-4 inline-block px-5 py-2 bg-black text-white text-sm hover:bg-gray-900 transition-colors"
             >
               Shop Now
@@ -153,7 +228,11 @@
           <span>Subtotal</span>
           <span id="cart-subtotal">$0.00</span>
         </div>
-        <a href="/checkout" id="checkout-button" class="w-full bg-black text-white py-2.5 text-sm hover:bg-gray-900 transition-colors disabled:bg-gray-200 disabled:text-gray-500 block text-center">
+        <a
+          href="/checkout"
+          id="checkout-button"
+          class="w-full bg-black text-white py-2.5 text-sm hover:bg-gray-900 transition-colors disabled:bg-gray-200 disabled:text-gray-500 block text-center"
+        >
           Checkout
         </a>
       </div>
@@ -163,42 +242,48 @@
 
 <script>
   // Import cart utilities
-  import { initCart, getCart, removeFromCart, updateQuantity, formatPrice } from '../utils/cartUtils';
+  import {
+    initCart,
+    getCart,
+    removeFromCart,
+    updateQuantity,
+    formatPrice,
+  } from "../utils/cartUtils";
 
   // Client-side JavaScript to replace React state and event handlers
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener("DOMContentLoaded", () => {
     // Mobile menu elements
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const mobileOverlay = document.getElementById('mobile-overlay');
-    const closeMobileMenuButton = document.getElementById('close-mobile-menu');
-    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+    const mobileMenuButton = document.getElementById("mobile-menu-button");
+    const mobileMenu = document.getElementById("mobile-menu");
+    const mobileOverlay = document.getElementById("mobile-overlay");
+    const closeMobileMenuButton = document.getElementById("close-mobile-menu");
+    const mobileNavLinks = document.querySelectorAll(".mobile-nav-link");
 
     // Cart elements
-    const cartButton = document.getElementById('cart-button');
-    const cartSidebar = document.getElementById('cart-sidebar');
-    const cartOverlay = document.getElementById('cart-overlay');
-    const closeCartButton = document.getElementById('close-cart');
-    const cartItemsContainer = document.getElementById('cart-items-container');
-    const emptyCartMessage = document.getElementById('empty-cart-message');
-    const cartSubtotal = document.getElementById('cart-subtotal');
-    const checkoutButton = document.getElementById('checkout-button');
+    const cartButton = document.getElementById("cart-button");
+    const cartSidebar = document.getElementById("cart-sidebar");
+    const cartOverlay = document.getElementById("cart-overlay");
+    const closeCartButton = document.getElementById("close-cart");
+    const cartItemsContainer = document.getElementById("cart-items-container");
+    const emptyCartMessage = document.getElementById("empty-cart-message");
+    const cartSubtotal = document.getElementById("cart-subtotal");
+    const checkoutButton = document.getElementById("checkout-button");
 
     // Toggle mobile menu
     const toggleMobileMenu = (e) => {
       e.preventDefault();
       e.stopPropagation();
-      
-      if (mobileMenu.classList.contains('-translate-x-full')) {
+
+      if (mobileMenu.classList.contains("-translate-x-full")) {
         // Open mobile menu
-        mobileMenu.classList.remove('-translate-x-full');
-        mobileMenu.classList.add('translate-x-0');
-        mobileOverlay.classList.remove('hidden');
-        
+        mobileMenu.classList.remove("-translate-x-full");
+        mobileMenu.classList.add("translate-x-0");
+        mobileOverlay.classList.remove("hidden");
+
         // Ensure cart is closed if opening mobile menu
-        cartSidebar.classList.add('translate-x-full');
-        cartSidebar.classList.remove('translate-x-0');
-        cartOverlay.classList.add('hidden');
+        cartSidebar.classList.add("translate-x-full");
+        cartSidebar.classList.remove("translate-x-0");
+        cartOverlay.classList.add("hidden");
       } else {
         // Close mobile menu
         closeMobileMenu();
@@ -209,17 +294,17 @@
     const toggleCart = (e) => {
       e.preventDefault();
       e.stopPropagation();
-      
-      if (cartSidebar.classList.contains('translate-x-full')) {
+
+      if (cartSidebar.classList.contains("translate-x-full")) {
         // Open cart
-        cartSidebar.classList.remove('translate-x-full');
-        cartSidebar.classList.add('translate-x-0');
-        cartOverlay.classList.remove('hidden');
-        
+        cartSidebar.classList.remove("translate-x-full");
+        cartSidebar.classList.add("translate-x-0");
+        cartOverlay.classList.remove("hidden");
+
         // Ensure mobile menu is closed if opening cart
-        mobileMenu.classList.add('-translate-x-full');
-        mobileMenu.classList.remove('translate-x-0');
-        mobileOverlay.classList.add('hidden');
+        mobileMenu.classList.add("-translate-x-full");
+        mobileMenu.classList.remove("translate-x-0");
+        mobileOverlay.classList.add("hidden");
       } else {
         // Close cart
         closeCart();
@@ -228,161 +313,226 @@
 
     // Close mobile menu
     const closeMobileMenu = () => {
-      mobileMenu.classList.add('-translate-x-full');
-      mobileMenu.classList.remove('translate-x-0');
-      mobileOverlay.classList.add('hidden');
+      mobileMenu.classList.add("-translate-x-full");
+      mobileMenu.classList.remove("translate-x-0");
+      mobileOverlay.classList.add("hidden");
     };
 
     // Close cart
     const closeCart = () => {
-      cartSidebar.classList.add('translate-x-full');
-      cartSidebar.classList.remove('translate-x-0');
-      cartOverlay.classList.add('hidden');
+      cartSidebar.classList.add("translate-x-full");
+      cartSidebar.classList.remove("translate-x-0");
+      cartOverlay.classList.add("hidden");
     };
 
     // Initialize: ensure everything is closed by default
     closeMobileMenu();
     closeCart();
-    
+
     // Initialize cart
     initCart();
     updateCartUI();
-    
+
     // Event listeners
-    mobileMenuButton.addEventListener('click', toggleMobileMenu);
-    closeMobileMenuButton.addEventListener('click', closeMobileMenu);
-    mobileOverlay.addEventListener('click', closeMobileMenu);
-    
-    cartButton.addEventListener('click', toggleCart);
-    closeCartButton.addEventListener('click', closeCart);
-    cartOverlay.addEventListener('click', closeCart);
-    
+    mobileMenuButton.addEventListener("click", toggleMobileMenu);
+    closeMobileMenuButton.addEventListener("click", closeMobileMenu);
+    mobileOverlay.addEventListener("click", closeMobileMenu);
+
+    cartButton.addEventListener("click", toggleCart);
+    closeCartButton.addEventListener("click", closeCart);
+    cartOverlay.addEventListener("click", closeCart);
+
     // Mobile navigation links
-    mobileNavLinks.forEach(link => {
-      link.addEventListener('click', () => {
+    mobileNavLinks.forEach((link) => {
+      link.addEventListener("click", () => {
         // Just close menus, allow normal link behavior
         closeMobileMenu();
         closeCart();
       });
     });
-    
+
     // Listen for cart updates
-    window.addEventListener('cart-updated', () => {
+    window.addEventListener("cart-updated", () => {
       updateCartUI();
     });
-    
+
     // Function to update cart UI
     function updateCartUI() {
       const cart = getCart();
-      const cartItemsContainer = document.getElementById('cart-items-container');
-      const emptyCartMessage = document.getElementById('empty-cart-message');
-      const cartSubtotal = document.getElementById('cart-subtotal');
-      const checkoutButton = document.getElementById('checkout-button');
-      
-      // Ensure cart has valid structure
-      if (!cart || typeof cart !== 'object') {
-        console.error('Invalid cart object:', cart);
+      const cartItemsContainer = document.getElementById(
+        "cart-items-container",
+      );
+      const emptyCartMessage = document.getElementById("empty-cart-message");
+      const cartSubtotal = document.getElementById("cart-subtotal");
+      const checkoutButton = document.getElementById("checkout-button");
+
+      if (!cart || typeof cart !== "object") {
+        console.error("Invalid cart object:", cart);
         return;
       }
 
-      // Update cart count
-      const cartCounts = document.querySelectorAll('.cart-count');
-      cartCounts.forEach(cartCount => {
+      // Filter out zero-quantity items for display and logic
+      const validItems = Array.isArray(cart.items)
+        ? cart.items.filter((item) => item.quantity > 0)
+        : [];
+
+      const hasItems = validItems.length > 0;
+
+      // Update cart count (sum of quantities)
+      const totalItems = validItems.reduce((sum, it) => sum + it.quantity, 0);
+      const cartCounts = document.querySelectorAll(".cart-count");
+      cartCounts.forEach((cartCount) => {
         if (cartCount) {
-          cartCount.textContent = cart.totalItems || '';
-          cartCount.classList.toggle('hidden', cart.totalItems === 0);
+          cartCount.textContent = totalItems || "";
+          cartCount.classList.toggle("hidden", totalItems === 0);
         }
       });
-      
-      // Clear existing cart items
-      // Keep the empty cart message, but remove other items
-      Array.from(cartItemsContainer.children).forEach(child => {
-        if (child !== emptyCartMessage && child.classList.contains('cart-item')) {
-          cartItemsContainer.removeChild(child);
+
+      // Show/hide empty message
+      emptyCartMessage.style.display = !hasItems ? "flex" : "none";
+
+      // Handle items wrapper
+      let itemsWrapper = document.getElementById("cart-items-wrapper");
+
+      if (!hasItems) {
+        // Remove any leftover items wrapper so stale UI doesn't persist
+        if (itemsWrapper) {
+          itemsWrapper.remove();
         }
-      });
-      
-      // Ensure cart.items exists before accessing its length
-      const hasItems = cart.items && Array.isArray(cart.items) && cart.items.length > 0;
-      
-      // Show/hide empty cart message
-      emptyCartMessage.style.display = !hasItems ? 'flex' : 'none';
-      
-      // Add cart items
-      if (hasItems) {
-        // Create a container for cart items if it doesn't exist
-        let itemsWrapper = document.getElementById('cart-items-wrapper');
+      } else {
+        // Create or clear items wrapper
         if (!itemsWrapper) {
-          itemsWrapper = document.createElement('div');
-          itemsWrapper.id = 'cart-items-wrapper';
-          itemsWrapper.className = 'cart-items-wrapper';
+          itemsWrapper = document.createElement("div");
+          itemsWrapper.id = "cart-items-wrapper";
+          itemsWrapper.className = "cart-items-wrapper";
           cartItemsContainer.appendChild(itemsWrapper);
         } else {
-          // Clear existing items
-          itemsWrapper.innerHTML = '';
+          itemsWrapper.innerHTML = "";
         }
-        
-        // Add each cart item
-        cart.items.forEach(item => {
-          const itemElement = document.createElement('div');
-          itemElement.className = 'cart-item flex items-center py-4 border-b border-gray-200';
-          itemElement.innerHTML = `
-            <div class="w-20 h-20 flex-shrink-0 mr-4">
-              <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
-            </div>
-            <div class="flex-1">
-              <h3 class="text-sm font-medium">${item.name}</h3>
-              <div class="flex items-center mt-1">
-                <button class="quantity-btn decrease text-gray-500 w-6 h-6 flex items-center justify-center" data-id="${item.id}">
-                  -
-                </button>
-                <span class="quantity mx-2">${item.quantity}</span>
-                <button class="quantity-btn increase text-gray-500 w-6 h-6 flex items-center justify-center" data-id="${item.id}">
-                  +
-                </button>
-              </div>
-              <div class="mt-1 text-sm">${formatPrice(item.price)} × ${item.quantity}</div>
-            </div>
-            <div class="ml-4">
-              <span class="font-medium">${formatPrice(item.price * item.quantity)}</span>
-              <button class="remove-item ml-4 text-gray-400 hover:text-red-500" data-id="${item.id}">
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          `;
+
+        // Render each valid item
+        validItems.forEach((item) => {
+          const itemElement = document.createElement("div");
+          itemElement.className =
+            "cart-item flex items-center py-4 border-b border-gray-200";
+
+          // Safe DOM construction instead of innerHTML
+          const imgWrapper = document.createElement("div");
+          imgWrapper.className = "w-20 h-20 flex-shrink-0 mr-4";
+          const img = document.createElement("img");
+          img.src = item.image;
+          img.alt = item.name;
+          img.className = "w-full h-full object-cover";
+          imgWrapper.appendChild(img);
+
+          const info = document.createElement("div");
+          info.className = "flex-1";
+          const title = document.createElement("h3");
+          title.className = "text-sm font-medium";
+          title.textContent = item.name;
+
+          const qtyContainer = document.createElement("div");
+          qtyContainer.className = "flex items-center mt-1";
+
+          const decreaseBtn = document.createElement("button");
+          decreaseBtn.className =
+            "quantity-btn decrease text-gray-500 w-6 h-6 flex items-center justify-center";
+          decreaseBtn.setAttribute("data-id", item.id);
+          decreaseBtn.textContent = "-";
+
+          const qtySpan = document.createElement("span");
+          qtySpan.className = "quantity mx-2";
+          qtySpan.textContent = item.quantity;
+
+          const increaseBtn = document.createElement("button");
+          increaseBtn.className =
+            "quantity-btn increase text-gray-500 w-6 h-6 flex items-center justify-center";
+          increaseBtn.setAttribute("data-id", item.id);
+          increaseBtn.textContent = "+";
+
+          qtyContainer.appendChild(decreaseBtn);
+          qtyContainer.appendChild(qtySpan);
+          qtyContainer.appendChild(increaseBtn);
+
+          const priceInfo = document.createElement("div");
+          priceInfo.className = "mt-1 text-sm";
+          priceInfo.textContent = `${formatPrice(item.price)} × ${item.quantity}`;
+
+          info.appendChild(title);
+          info.appendChild(qtyContainer);
+          info.appendChild(priceInfo);
+
+          const right = document.createElement("div");
+          right.className = "ml-4";
+          const totalPrice = document.createElement("span");
+          totalPrice.className = "font-medium";
+          totalPrice.textContent = formatPrice(item.price * item.quantity);
+
+          const removeBtn = document.createElement("button");
+          removeBtn.className =
+            "remove-item ml-4 text-gray-400 hover:text-red-500";
+          removeBtn.setAttribute("data-id", item.id);
+          removeBtn.setAttribute("aria-label", `Remove ${item.name}`);
+          const svg = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg",
+          );
+          svg.setAttribute("class", "h-4 w-4");
+          svg.setAttribute("fill", "none");
+          svg.setAttribute("viewBox", "0 0 24 24");
+          svg.setAttribute("stroke", "currentColor");
+          const path = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path",
+          );
+          path.setAttribute("stroke-linecap", "round");
+          path.setAttribute("stroke-linejoin", "round");
+          path.setAttribute("stroke-width", "1.5");
+          path.setAttribute("d", "M6 18L18 6M6 6l12 12");
+          svg.appendChild(path);
+          removeBtn.appendChild(svg);
+
+          right.appendChild(totalPrice);
+          right.appendChild(removeBtn);
+
+          itemElement.appendChild(imgWrapper);
+          itemElement.appendChild(info);
+          itemElement.appendChild(right);
+
           itemsWrapper.appendChild(itemElement);
-          
-          // Add event listeners for quantity buttons and remove button
-          const decreaseBtn = itemElement.querySelector('.decrease');
-          const increaseBtn = itemElement.querySelector('.increase');
-          const removeBtn = itemElement.querySelector('.remove-item');
-          
-          decreaseBtn.addEventListener('click', () => {
+
+          // Event listeners
+          decreaseBtn.addEventListener("click", () => {
             updateQuantity(item.id, item.quantity - 1);
           });
-          
-          increaseBtn.addEventListener('click', () => {
+          increaseBtn.addEventListener("click", () => {
             updateQuantity(item.id, item.quantity + 1);
           });
-          
-          removeBtn.addEventListener('click', () => {
+          removeBtn.addEventListener("click", () => {
             removeFromCart(item.id);
+            updateCartUI();
           });
         });
       }
-      
-      // Update subtotal and checkout button
+
+      // Update subtotal
       cartSubtotal.textContent = formatPrice(cart.subtotal);
-      
-      // Handle checkout button state
-      if (cart.items.length === 0) {
-        checkoutButton.classList.add('disabled:bg-gray-200', 'disabled:text-gray-500', 'pointer-events-none');
-        checkoutButton.setAttribute('aria-disabled', 'true');
+
+      // Checkout button state
+      if (!hasItems) {
+        checkoutButton.classList.add(
+          "disabled:bg-gray-200",
+          "disabled:text-gray-500",
+          "pointer-events-none",
+        );
+        checkoutButton.setAttribute("aria-disabled", "true");
       } else {
-        checkoutButton.classList.remove('disabled:bg-gray-200', 'disabled:text-gray-500', 'pointer-events-none');
-        checkoutButton.removeAttribute('aria-disabled');
+        checkoutButton.classList.remove(
+          "disabled:bg-gray-200",
+          "disabled:text-gray-500",
+          "pointer-events-none",
+        );
+        checkoutButton.removeAttribute("aria-disabled");
       }
     }
   });

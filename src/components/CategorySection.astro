@@ -1,39 +1,113 @@
 ---
 // Save this as src/components/ShopByCategory.astro
 import CategoriesService from "../api/categoriesService";
-import { fetchCategories } from "../lib/api";
 
 const categories = await CategoriesService.getAll();
+
+// Define the category type
+interface Category {
+  id: string;
+  name: string;
+  image: string;
+  products: number;
+}
 ---
 
 <section class="py-12 px-4 max-w-7xl mx-auto">
   <div class="mb-8">
     <h2 class="text-2xl font-bold mb-3 uppercase">Shop by category</h2>
-    <h3 class="text-lg font-semibold mb-2 text-gray-800">Find Furniture That Fits Your Lifestyle</h3>
     <p class="text-gray-600 max-w-2xl text-sm">
       Whether you're looking for handcrafted wooden sofas or minimalist end tables, we've curated a selection to suit every space and style.
     </p>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    {
-      categories.map((category) => (
-        <a href="#" class="group flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors duration-300">
-          <div class="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-            <img
-              src={category.image}
-              alt={`${category.name} category`}
-              class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-            />
-            <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-          </div>
+  <div class="swiper category-swiper">
+    <div class="swiper-wrapper">
+      {
+        categories.map((category: Category) => (
+          <div class="swiper-slide">
+            <a href="#" class="group flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors duration-300">
+              <div class="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
+                <img
+                  src={category.image}
+                  alt={`${category.name} category`}
+                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                />
+                <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+              </div>
 
-          <div class="ml-4 text-left">
-            <h3 class="text-base font-medium text-gray-900">{category.name}</h3>
-            <p class="text-sm text-gray-600">{category.products} products</p>
+              <div class="ml-4 text-left">
+                <h3 class="text-base font-medium text-gray-900">{category.name}</h3>
+                <p class="text-sm text-gray-600">{category.products} products</p>
+              </div>
+            </a>
           </div>
-        </a>
-      ))
-    }
+        ))
+      }
+    </div>
+    <!-- <div class="swiper-pagination"></div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div> -->
   </div>
 </section>
+
+<style>
+  .category-swiper {
+    padding-bottom: 40px;
+  }
+  
+  .swiper-slide {
+    width: auto;
+    max-width: 280px;
+  }
+  
+  .swiper-pagination {
+    bottom: 0;
+  }
+  
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: #374151;
+  }
+  
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    color: #111827;
+  }
+</style>
+
+<script>
+  import Swiper from 'swiper';
+  import { Navigation, Pagination } from 'swiper/modules';
+  import 'swiper/css';
+  import 'swiper/css/navigation';
+  import 'swiper/css/pagination';
+
+  // Initialize Swiper when the DOM is loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    new Swiper('.category-swiper', {
+      modules: [Navigation, Pagination],
+      slidesPerView: 1,
+      spaceBetween: 24,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 2,
+        },
+        768: {
+          slidesPerView: 3,
+        },
+        1024: {
+          slidesPerView: 4,
+        },
+      },
+    });
+  });
+</script>

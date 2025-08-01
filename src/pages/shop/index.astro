@@ -24,7 +24,7 @@ try {
       in_stock: product.in_stock,
       stock_quantity: product.stock_quantity,
       attributes: product.attributes || {},
-      category_id: product.category_id || null,
+      category_name: product.category_name || null,
       created_at: product.created_at || new Date().toISOString(),
     };
   });
