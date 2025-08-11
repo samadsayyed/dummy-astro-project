@@ -51,7 +51,7 @@ const getFirstImage = (product: Props["product"]) => {
     <img
       src={getFirstImage(product)}
       alt={product.name}
-      class="w-full h-80 object-cover transition-all duration-700 ease-out group-hover:scale-102 filter group-hover:contrast-110"
+      class="w-full h-80 object-contain transition-all duration-700 ease-out group-hover:scale-102 filter group-hover:contrast-110"
     />
 
     <!-- Action Buttons that appear on hover -->
@@ -182,15 +182,7 @@ const getFirstImage = (product: Props["product"]) => {
     }
   </div>
 
-  <!-- Toast Notification - Monochromatic -->
-  <div class="toast-notification fixed top-6 right-6 bg-gray-900 text-white px-6 py-4 rounded-lg shadow-2xl transform translate-x-full opacity-0 transition-all duration-500 ease-out z-50 border border-gray-700">
-    <div class="flex items-center">
-      <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-      </svg>
-      <span class="toast-message font-medium">Added to cart!</span>
-    </div>
-  </div>
+
 </div>
 
 <style>
@@ -221,11 +213,7 @@ const getFirstImage = (product: Props["product"]) => {
     animation: elegant-slide-in 0.4s ease-out;
   }
 
-  /* Toast elegant slide-in animation */
-  .toast-notification.show {
-    transform: translateX(0);
-    opacity: 1;
-  }
+
 
   /* Refined keyframe animations */
   @keyframes subtle-pulse {
@@ -357,27 +345,9 @@ const getFirstImage = (product: Props["product"]) => {
   }
 
   function showToast(message, type = "success") {
-    const toast = document.querySelector('.toast-notification');
-    if (!toast) return;
-
-    const toastMessage = toast.querySelector('.toast-message');
-    toastMessage.textContent = message;
-    
-    // Set toast style based on type - keeping monochromatic
-    if (type === "error") {
-      toast.classList.remove('bg-gray-900', 'border-gray-700');
-      toast.classList.add('bg-gray-800', 'border-gray-600');
-    } else {
-      toast.classList.remove('bg-gray-800', 'border-gray-600');
-      toast.classList.add('bg-gray-900', 'border-gray-700');
+    // Use the global custom toast component
+    if (window.customToast) {
+      window.customToast.show(message, type, 4000);
     }
-    
-    // Show toast
-    toast.classList.add('show');
-    
-    // Hide toast after 4 seconds
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, 4000);
   }
 </script>

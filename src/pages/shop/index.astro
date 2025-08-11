@@ -3,6 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import ShopContainer from "../../components/ShopContainer";
 import { productsService } from "../../api/productsService.js";
 import CategoriesService from "../../api/categoriesService.js";
+import Toast from "../../components/Toast.astro";
 import "../../styles/shop.css";
 
 let products = [];
@@ -51,6 +52,8 @@ try {
     client:load
   />
 </Layout>
+
+<Toast />
 
 <style>
   /* Additional global styles for enhanced aesthetics */

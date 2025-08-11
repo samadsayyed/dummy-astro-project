@@ -100,28 +100,10 @@ const ProductCardWrapper = ({ product, viewMode = 'grid' }) => {
   };
 
   const showToast = (message, type = "success") => {
-    const toast = document.querySelector('.toast-notification');
-    if (!toast) return;
-
-    const toastMessage = toast.querySelector('.toast-message');
-    toastMessage.textContent = message;
-    
-    // Set toast style based on type - keeping monochromatic
-    if (type === "error") {
-      toast.classList.remove('bg-gray-900', 'border-gray-700');
-      toast.classList.add('bg-gray-800', 'border-gray-600');
-    } else {
-      toast.classList.remove('bg-gray-800', 'border-gray-600');
-      toast.classList.add('bg-gray-900', 'border-gray-700');
+    // Use the global custom toast component
+    if (window.customToast) {
+      window.customToast.show(message, type, 4000);
     }
-    
-    // Show toast
-    toast.classList.add('show');
-    
-    // Hide toast after 4 seconds
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, 4000);
   };
 
   // Grid View Layout
@@ -143,7 +125,7 @@ const ProductCardWrapper = ({ product, viewMode = 'grid' }) => {
           <img
             src={getFirstImage(product)}
             alt={product.name}
-            className="w-full h-80 object-cover transition-all duration-700 ease-out group-hover:scale-105 filter group-hover:contrast-110"
+            className="w-full aspect-square object-contain transition-all duration-700 ease-out group-hover:scale-105 filter group-hover:contrast-110"
             loading="lazy"
           />
 
@@ -262,15 +244,7 @@ const ProductCardWrapper = ({ product, viewMode = 'grid' }) => {
           )}
         </div>
 
-        {/* Toast Notification */}
-        <div className="toast-notification fixed top-6 right-6 bg-gray-900 text-white px-6 py-4 shadow-2xl transform translate-x-full opacity-0 transition-all duration-500 ease-out z-50 border border-gray-700">
-          <div className="flex items-center">
-            <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
-            </svg>
-            <span className="toast-message font-medium">Added to cart!</span>
-          </div>
-        </div>
+
       </article>
     );
   }
@@ -293,7 +267,7 @@ const ProductCardWrapper = ({ product, viewMode = 'grid' }) => {
         <img
           src={getFirstImage(product)}
           alt={product.name}
-          className="w-full h-48 md:h-full md:aspect-[4/3] object-cover transition-all duration-700 ease-out group-hover:scale-105 filter group-hover:contrast-110"
+          className="w-full h-48 md:h-full md:aspect-[4/3] object-contain transition-all duration-700 ease-out group-hover:scale-105 filter group-hover:contrast-110"
           loading="lazy"
         />
       </div>
@@ -424,15 +398,7 @@ const ProductCardWrapper = ({ product, viewMode = 'grid' }) => {
         </div>
       </div>
 
-      {/* Toast Notification */}
-      <div className="toast-notification fixed top-6 right-6 bg-gray-900 text-white px-6 py-4 shadow-2xl transform translate-x-full opacity-0 transition-all duration-500 ease-out z-50 border border-gray-700">
-        <div className="flex items-center">
-          <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
-          </svg>
-          <span className="toast-message font-medium">Added to cart!</span>
-        </div>
-      </div>
+
     </article>
   );
 };

@@ -120,9 +120,9 @@
     }
   
     // Newsletter subscription form handling
-    const form = document.querySelector('form');
-    if (form) {
-      form.addEventListener('submit', (e) => {
+    const newsletterForm = document.querySelector('form:not(#contactForm)');
+    if (newsletterForm) {
+      newsletterForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const target = e.target as HTMLFormElement;
         const emailInput = target.querySelector('input[type="email"]') as HTMLInputElement;
