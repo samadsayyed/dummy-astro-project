@@ -239,10 +239,10 @@ try {
 
         <!-- Stock Information -->
         <div class="bg-gray-50 p-4 rounded-lg">
-          <div class="flex items-center justify-between">
+          <!-- <div class="flex items-center justify-between">
             <span class="text-sm text-gray-600">Available Quantity:</span>
             <span class="font-medium text-gray-900">{currentVariant?.stock_quantity || 0} units</span>
-          </div>
+          </div> -->
           {currentVariant?.stock_quantity > 0 && currentVariant?.stock_quantity <= 5 && (
             <div class="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
               <div class="flex items-center">
@@ -272,7 +272,13 @@ try {
         </button>
         </div>
 
-        <button class="w-full bg-white border-2 border-gray-900 text-gray-900 py-3 px-6 rounded-md hover:bg-gray-50 transition-colors font-medium">BUY NOW</button>
+        <button 
+          class="w-full bg-white border-2 border-gray-900 text-gray-900 py-3 px-6 rounded-md hover:bg-gray-50 transition-colors font-medium"
+          disabled={!currentVariant?.in_stock || currentVariant?.stock_quantity <= 0}
+          id="buyNowBtn"
+        >
+          {currentVariant?.in_stock && currentVariant?.stock_quantity > 0 ? 'BUY NOW' : 'OUT OF STOCK'}
+        </button>
 
         <div class="flex items-center space-x-4 pt-4">
           <button id="wishlistBtn" class="flex items-center text-gray-500 hover:text-gray-700 transition-colors wishlist-btn">
@@ -335,10 +341,10 @@ try {
                 <dt class="text-sm font-medium text-gray-900">SKU</dt>
                 <dd class="text-sm text-gray-600 mt-1">{currentVariant?.sku || detailedProduct.sku}</dd>
               </div>
-              <div class="border-b border-gray-200 pb-3">
+              <!-- <div class="border-b border-gray-200 pb-3">
                 <dt class="text-sm font-medium text-gray-900">Stock Quantity</dt>
                 <dd class="text-sm text-gray-600 mt-1">{currentVariant?.stock_quantity || 0} units</dd>
-              </div>
+              </div> -->
               <div class="border-b border-gray-200 pb-3">
                 <dt class="text-sm font-medium text-gray-900">Availability</dt>
                 <dd class="text-sm text-gray-600 mt-1">
@@ -524,45 +530,78 @@ try {
 <script>
   // Wishlist functionality
   function getWishlist() {
-    return JSON.parse(localStorage.getItem('wishlist')) || [];
+    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || { items: [], totalItems: 0 };
+    // Handle both array format and object format with items property
+    return Array.isArray(wishlist) ? { items: wishlist, totalItems: wishlist.length } : wishlist;
   }
 
   function saveWishlist(wishlist) {
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    // Ensure we're saving in object format for consistency with ProductCard
+    const wishlistObject = Array.isArray(wishlist) ? { items: wishlist, totalItems: wishlist.length } : wishlist;
+    localStorage.setItem('wishlist', JSON.stringify(wishlistObject));
   }
 
   function isInWishlist(productId) {
     const wishlist = getWishlist();
-    return wishlist.some(item => item.id === productId);
+    return wishlist.items && wishlist.items.some(item => item.id === productId);
   }
 
   function addToWishlist(product) {
-    const wishlist = getWishlist();
-    const existingItem = wishlist.find(item => item.id === product.id);
+    let wishlist = getWishlist();
+    
+    // Ensure wishlist.items exists
+    if (!wishlist.items) {
+      wishlist.items = [];
+    }
+    
+    const existingItem = wishlist.items.find(item => item.id === product.id);
     
     if (!existingItem) {
-      wishlist.push({
+      wishlist.items.push({
         id: product.id,
         name: product.name,
+        slug: product.slug,
         price: currentVariant.discount_price || currentVariant.price,
+        discount_price: currentVariant.discount_price,
         image: currentVariant.images && currentVariant.images[0] ? currentVariant.images[0] : "https://placehold.co/400x400",
         sku: currentVariant.sku,
+        in_stock: currentVariant.in_stock,
+        stock_quantity: currentVariant.stock_quantity,
+        attributes: currentVariant.attributes || {},
         variantColor: currentVariant.attributes?.Color || currentVariant.attributes?.color || currentVariant.attributes?.color_name || currentVariant.attributes?.Colour
       });
+      
+      // Update wishlist totals
+      wishlist.totalItems = wishlist.items.length;
       saveWishlist(wishlist);
       showToast(`${product.name} added to wishlist`, "success");
+      
+      // Dispatch custom event for wishlist updates
+      window.dispatchEvent(new CustomEvent("wishlist-updated", { detail: wishlist }));
     }
   }
 
   function removeFromWishlist(productId) {
-    const wishlist = getWishlist();
-    const updatedWishlist = wishlist.filter(item => item.id !== productId);
-    saveWishlist(updatedWishlist);
+    let wishlist = getWishlist();
+    
+    // Ensure wishlist.items exists
+    if (!wishlist.items) {
+      wishlist.items = [];
+    }
+    
+    wishlist.items = wishlist.items.filter(item => item.id !== productId);
+    wishlist.totalItems = wishlist.items.length;
+    saveWishlist(wishlist);
     showToast("Item removed from wishlist", "success");
+    
+    // Dispatch custom event for wishlist updates
+    window.dispatchEvent(new CustomEvent("wishlist-updated", { detail: wishlist }));
   }
 
   function updateWishlistButton() {
     const wishlistBtn = document.getElementById('wishlistBtn');
+    if (!wishlistBtn) return;
+    
     const wishlistIcon = wishlistBtn.querySelector('.wishlist-icon');
     const wishlistText = wishlistBtn.querySelector('.wishlist-text');
     
@@ -915,10 +954,10 @@ try {
     // Add Stock Quantity
     const stockDiv = document.createElement('div');
     stockDiv.className = 'border-b border-gray-200 pb-3';
-    stockDiv.innerHTML = `
-      <dt class="text-sm font-medium text-gray-900">Stock Quantity</dt>
-      <dd class="text-sm text-gray-600 mt-1">${currentVariant?.stock_quantity || 0} units</dd>
-    `;
+    // stockDiv.innerHTML = `
+    //   <dt class="text-sm font-medium text-gray-900">Stock Quantity</dt>
+    //   <dd class="text-sm text-gray-600 mt-1">${currentVariant?.stock_quantity || 0} units</dd>
+    // `;
     existingContent.appendChild(stockDiv);
     
     // Add Availability
@@ -1002,7 +1041,7 @@ try {
       }
       
       // Update price
-      const priceElement = document.querySelector('.text-3xl.font-bold');
+      const priceElement = document.querySelector('.flex.items-center.space-x-4 .text-3xl.font-bold');
       const originalPriceElement = document.querySelector('.text-lg.text-gray-500.line-through');
       const discountElement = document.querySelector('.bg-red-100');
       
@@ -1039,49 +1078,74 @@ try {
         if (discountElement) discountElement.remove();
       }
       
-      // Update stock status
-      const stockElement = document.querySelector('.px-2.py-1.text-xs.font-medium.rounded-full');
-      const stockQuantityElement = document.querySelector('.font-medium.text-gray-900');
-      const addToCartBtn = document.getElementById('addToCartBtn');
-      const stockInfoContainer = document.querySelector('.bg-gray-50.p-4.rounded-lg');
+              // Update stock status
+        const stockElement = document.querySelector('.px-2.py-1.text-xs.font-medium.rounded-full');
+        const stockQuantityElement = document.querySelector('.font-medium.text-gray-900');
+        const addToCartBtn = document.getElementById('addToCartBtn');
+        const buyNowBtn = document.getElementById('buyNowBtn');
+        const stockInfoContainer = document.querySelector('.bg-gray-50.p-4.rounded-lg');
       
       if (currentVariant.in_stock && currentVariant.stock_quantity > 0) {
-        stockElement.className = 'px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800';
-        stockElement.textContent = 'In Stock';
-        addToCartBtn.disabled = false;
-        addToCartBtn.textContent = 'ADD TO CART';
-        addToCartBtn.className = 'flex-1 bg-gray-900 text-white py-3 px-6 rounded-md hover:bg-gray-800 transition-colors font-medium';
+        if (stockElement) {
+          stockElement.className = 'px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800';
+          stockElement.textContent = 'In Stock';
+        }
+        if (addToCartBtn) {
+          addToCartBtn.disabled = false;
+          addToCartBtn.textContent = 'ADD TO CART';
+          addToCartBtn.className = 'flex-1 bg-gray-900 text-white py-3 px-6 rounded-md hover:bg-gray-800 transition-colors font-medium';
+        }
+        if (buyNowBtn) {
+          buyNowBtn.disabled = false;
+          buyNowBtn.textContent = 'BUY NOW';
+          buyNowBtn.className = 'w-full bg-white border-2 border-gray-900 text-gray-900 py-3 px-6 rounded-md hover:bg-gray-50 transition-colors font-medium';
+        }
       } else {
-        stockElement.className = 'px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800';
-        stockElement.textContent = 'Out of Stock';
-        addToCartBtn.disabled = true;
-        addToCartBtn.textContent = 'OUT OF STOCK';
-        addToCartBtn.className = 'flex-1 bg-gray-400 text-white py-3 px-6 rounded-md font-medium';
+        if (stockElement) {
+          stockElement.className = 'px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800';
+          stockElement.textContent = 'Out of Stock';
+        }
+        if (addToCartBtn) {
+          addToCartBtn.disabled = true;
+          addToCartBtn.textContent = 'OUT OF STOCK';
+          addToCartBtn.className = 'flex-1 bg-gray-400 text-white py-3 px-6 rounded-md font-medium';
+        }
+        if (buyNowBtn) {
+          buyNowBtn.disabled = true;
+          buyNowBtn.textContent = 'OUT OF STOCK';
+          buyNowBtn.className = 'w-full bg-gray-400 text-white py-3 px-6 rounded-md font-medium';
+        }
       }
       
-      stockQuantityElement.textContent = `${currentVariant.stock_quantity} units`;
-      quantityInput.max = currentVariant.stock_quantity;
+      // if (stockQuantityElement) {
+      //   stockQuantityElement.textContent = `${currentVariant.stock_quantity} units`;
+      // }
+      if (quantityInput) {
+        quantityInput.max = currentVariant.stock_quantity;
+      }
       
       // Update stock warning
-      const existingWarning = stockInfoContainer.querySelector('.bg-amber-50');
-      if (existingWarning) {
-        existingWarning.remove();
-      }
-      
-      if (currentVariant.stock_quantity > 0 && currentVariant.stock_quantity <= 5) {
-        const warningDiv = document.createElement('div');
-        warningDiv.className = 'mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg';
-        warningDiv.innerHTML = `
-          <div class="flex items-center">
-            <svg class="w-5 h-5 text-amber-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-            </svg>
-            <span class="text-sm font-medium text-amber-800">
-              Only ${currentVariant.stock_quantity} left! Order soon to avoid disappointment.
-            </span>
-          </div>
-        `;
-        stockInfoContainer.appendChild(warningDiv);
+      if (stockInfoContainer) {
+        const existingWarning = stockInfoContainer.querySelector('.bg-amber-50');
+        if (existingWarning) {
+          existingWarning.remove();
+        }
+        
+        if (currentVariant.stock_quantity > 0 && currentVariant.stock_quantity <= 5) {
+          const warningDiv = document.createElement('div');
+          warningDiv.className = 'mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg';
+          warningDiv.innerHTML = `
+            <div class="flex items-center">
+              <svg class="w-5 h-5 text-amber-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="text-sm font-medium text-amber-800">
+                Only ${currentVariant.stock_quantity} left! Order soon to avoid disappointment.
+              </span>
+            </div>
+          `;
+          stockInfoContainer.appendChild(warningDiv);
+        }
       }
       
       // Update quantity display when variant changes
@@ -1093,7 +1157,7 @@ try {
   });
 
   // Initialize tab navigation
-  const tabLinks = document.querySelectorAll('nav a');
+  const tabLinks = document.querySelectorAll('.mt-16 .border-b nav a');
   const tabContents = document.querySelectorAll('#details, #specifications, #delivery');
   
   function showTab(tabId) {
@@ -1231,6 +1295,74 @@ try {
     addToCart(productData, currentVariant, 1, document.getElementById('addToCartBtn'));
   });
 
+  // Buy Now button handler - adds to cart and redirects to checkout
+  document.getElementById('buyNowBtn').addEventListener('click', () => {
+    if (!currentVariant.in_stock || currentVariant.stock_quantity <= 0) {
+      showToast("Product is out of stock", "error");
+      return;
+    }
+
+    // Get the current quantity from the input
+    const quantity = parseInt(document.getElementById('quantityInput').value) || 1;
+    
+    // Use the proper cart structure
+    let cart = JSON.parse(localStorage.getItem("cart")) || {
+      items: [],
+      totalItems: 0,
+      subtotal: 0,
+    };
+
+    // Ensure cart.items exists
+    if (!cart.items) {
+      cart.items = [];
+    }
+
+    // Create a unique identifier for the variant
+    const variantId = currentVariant.id || `${productData.id}-${currentVariant.attributes?.Color || 'default'}`;
+    
+    // Check if item already exists in cart
+    const existingItemIndex = cart.items.findIndex(item => item.id === variantId);
+    
+    if (existingItemIndex >= 0) {
+      // Item already exists, just redirect to checkout
+      showToast("Redirecting to checkout...", "success");
+    } else {
+      // Add new item to cart
+      cart.items.push({
+        id: variantId,
+        name: productData.name,
+        price: currentVariant.discount_price || currentVariant.price,
+        image: currentVariant.images && currentVariant.images[0] ? currentVariant.images[0] : "https://placehold.co/400x400",
+        quantity: quantity,
+        variantColor: currentVariant.attributes?.Color,
+        variantSku: currentVariant.sku
+      });
+
+      // Update cart totals
+      cart.totalItems = cart.items.reduce(
+        (total, item) => total + item.quantity,
+        0
+      );
+      cart.subtotal = cart.items.reduce(
+        (total, item) => total + parseFloat(item.price) * item.quantity,
+        0
+      );
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+      
+      // Show success message
+      showToast(`${productData.name} added to cart`, "success");
+      
+      // Dispatch custom event for cart updates
+      window.dispatchEvent(new CustomEvent("cart-updated", { detail: cart }));
+    }
+    
+    // Redirect to checkout after a short delay
+    setTimeout(() => {
+      window.location.href = '/checkout';
+    }, 500);
+  });
+
   // Wishlist button handler
   document.getElementById('wishlistBtn').addEventListener('click', () => {
     if (isInWishlist(productData.id)) {
@@ -1238,6 +1370,11 @@ try {
     } else {
       addToWishlist(productData);
     }
+    updateWishlistButton();
+  });
+
+  // Listen for wishlist updates from other components
+  window.addEventListener('wishlist-updated', function() {
     updateWishlistButton();
   });
 

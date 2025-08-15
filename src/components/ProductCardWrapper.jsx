@@ -19,6 +19,8 @@ const ProductCardWrapper = ({ product, viewMode = 'grid' }) => {
   };
 
   const addToCart = (product, buttonElement) => {
+    if (typeof window === 'undefined') return;
+    
     if (!product.in_stock || product.stock_quantity <= 0) {
       showToast("Product is out of stock", "error");
       return;
@@ -101,8 +103,77 @@ const ProductCardWrapper = ({ product, viewMode = 'grid' }) => {
 
   const showToast = (message, type = "success") => {
     // Use the global custom toast component
-    if (window.customToast) {
+    if (typeof window !== 'undefined' && window.customToast) {
       window.customToast.show(message, type, 4000);
+    }
+  };
+
+  // Wishlist functions
+  const getWishlist = () => {
+    if (typeof window === 'undefined') return { items: [], totalItems: 0 };
+    return JSON.parse(localStorage.getItem('wishlist')) || { items: [], totalItems: 0 };
+  };
+
+  const saveWishlist = (wishlist) => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    // Dispatch custom event for wishlist updates
+    window.dispatchEvent(new CustomEvent('wishlist-updated', { detail: wishlist }));
+  };
+
+  const isInWishlist = (productId) => {
+    if (typeof window === 'undefined') return false;
+    const wishlist = getWishlist();
+    return wishlist.items && wishlist.items.some(item => item.id === productId);
+  };
+
+  const toggleWishlist = (product, buttonElement) => {
+    if (typeof window === 'undefined') return;
+    
+    const wishlist = getWishlist();
+    
+    // Ensure wishlist.items exists
+    if (!wishlist.items) {
+      wishlist.items = [];
+    }
+    
+    const existingItem = wishlist.items.find(item => item.id === product.id);
+    
+    if (existingItem) {
+      // Remove from wishlist
+      wishlist.items = wishlist.items.filter(item => item.id !== product.id);
+      wishlist.totalItems = wishlist.items.length;
+      saveWishlist(wishlist);
+      
+      // Update button appearance
+      buttonElement.classList.remove("wishlist-active");
+      showToast(`${product.name} removed from wishlist`, "info");
+    } else {
+      // Add to wishlist
+      wishlist.items.push({
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        price: product.price,
+        discount_price: product.discount_price,
+        image: getFirstImage(product),
+        in_stock: product.in_stock,
+        stock_quantity: product.stock_quantity,
+        attributes: product.attributes || {}
+      });
+      wishlist.totalItems = wishlist.items.length;
+      saveWishlist(wishlist);
+      
+      // Update button appearance
+      buttonElement.classList.add("wishlist-active");
+      showToast(`${product.name} added to wishlist`, "success");
+    }
+    
+    // Animate wishlist icon if it exists
+    const wishlistIcon = document.querySelector('.wishlist-icon');
+    if (wishlistIcon) {
+      wishlistIcon.classList.add('wishlist-bounce');
+      setTimeout(() => wishlistIcon.classList.remove('wishlist-bounce'), 800);
     }
   };
 
@@ -131,44 +202,7 @@ const ProductCardWrapper = ({ product, viewMode = 'grid' }) => {
 
           {/* Action Buttons that appear on hover */}
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 transition-all duration-500 group-hover:bg-black/5">
-            {/* Quick View and Compare Icons */}
-            <div className="absolute top-4 right-4 flex flex-col gap-3 transition-all duration-500 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0">
-              <a
-                href={`/shop/${product.slug}`}
-                className="bg-white p-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 border border-gray-100 hover:border-gray-300"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 text-gray-700"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </a>
-              <button className="bg-white p-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 border border-gray-100 hover:border-gray-300">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 text-gray-700"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-                  />
-                </svg>
-              </button>
-            </div>
+            
 
             {/* Add to Cart Button */}
             <button
@@ -191,11 +225,15 @@ const ProductCardWrapper = ({ product, viewMode = 'grid' }) => {
           </div>
 
           {/* Wishlist Heart Icon */}
-          <button className="absolute bottom-16 right-4 bg-white p-3 shadow-lg transition-all duration-500 transform opacity-0 group-hover:opacity-100 hover:scale-110 translate-x-2 group-hover:translate-x-0 border border-gray-100 hover:border-gray-300">
+          <button 
+            className={`wishlist-btn absolute bottom-16 right-4 bg-white p-3 shadow-lg transition-all duration-500 transform opacity-0 group-hover:opacity-100 hover:scale-110 translate-x-2 group-hover:translate-x-0 border border-gray-100 hover:border-gray-300 ${isInWishlist(product.id) ? 'wishlist-active' : ''}`}
+            onClick={(e) => toggleWishlist(product, e.target)}
+            data-product-id={product.id}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 text-gray-700"
-              fill="none"
+              className={`h-4 w-4 transition-colors duration-300 ${isInWishlist(product.id) ? 'text-red-500 fill-current' : 'text-gray-700'}`}
+              fill={isInWishlist(product.id) ? 'currentColor' : 'none'}
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
@@ -336,13 +374,15 @@ const ProductCardWrapper = ({ product, viewMode = 'grid' }) => {
                 </svg>
               </a>
               <button 
-                className="bg-white p-2 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-110 border border-gray-200 hover:border-gray-300"
-                title="Add to Wishlist"
+                className={`wishlist-btn bg-white p-2 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-110 border border-gray-200 hover:border-gray-300 ${isInWishlist(product.id) ? 'wishlist-active' : ''}`}
+                onClick={(e) => toggleWishlist(product, e.target)}
+                data-product-id={product.id}
+                title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 text-gray-700"
-                  fill="none"
+                  className={`h-4 w-4 transition-colors duration-300 ${isInWishlist(product.id) ? 'text-red-500 fill-current' : 'text-gray-700'}`}
+                  fill={isInWishlist(product.id) ? 'currentColor' : 'none'}
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >

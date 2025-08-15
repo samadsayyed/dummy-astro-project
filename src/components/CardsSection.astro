@@ -24,27 +24,27 @@ try {
 }
 ---
 
-<div class="max-w-7xl mx-auto px-4 py-16 flex flex-col md:flex-row">
+<div class="max-w-7xl mx-auto px-4 py-16 flex flex-col md:flex-row" data-aos="fade-up">
   <!-- Title Section -->
 
   <!-- Products Grid -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-    <div class=" mb-8 md:mb-0 pr-0 md:pr-8">
-      <h2 class="text-4xl font-bold mb-2">
+    <div class=" mb-8 md:mb-0 pr-0 md:pr-8" data-aos="fade-right" data-aos-delay="200">
+      <h2 class="text-4xl font-bold mb-2" data-aos="fade-up" data-aos-delay="300">
         <span class="block">Fresh Finds,</span>
         <span class="block">Just For</span>
         <span class="block underline">You</span>
       </h2>
-      <a href="/shop" class="inline-block mt-4 text-sm font-medium">
+      <a href="/shop" class="inline-block mt-4 text-sm font-medium" data-aos="fade-up" data-aos-delay="400">
         See All &gt;&gt;
       </a>
     </div>
 
     {
-      products.map((product: Product) => {
+      products.map((product: Product, index: number) => {
         if (!product) return null;
 
-        return <ProductCard product={product} />;
+        return <div data-aos="zoom-in" data-aos-delay={500 + (index * 100)}><ProductCard product={product} /></div>;
       })
     }
   </div>

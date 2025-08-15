@@ -58,7 +58,7 @@ const getFirstImage = (product: Props["product"]) => {
     <div
       class="absolute inset-0 flex flex-col items-center justify-center gap-2 transition-all duration-500 group-hover:bg-black/5"
     >
-      <!-- Quick View and Compare Icons -->
+      <!-- Quick View Icon -->
       <div
         class="absolute top-4 right-4 flex flex-col gap-3 transition-all duration-500 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0"
       >
@@ -80,23 +80,6 @@ const getFirstImage = (product: Props["product"]) => {
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
         </a>
-        <button
-          class="bg-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 border border-gray-100 hover:border-gray-300"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 text-gray-700"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
-          </svg>
-        </button>
       </div>
 
       <!-- Add to Cart Button - Monochromatic -->
@@ -124,11 +107,13 @@ const getFirstImage = (product: Props["product"]) => {
 
     <!-- Wishlist Heart Icon -->
     <button
-      class="absolute bottom-16 right-4 bg-white p-3 rounded-full shadow-lg transition-all duration-500 transform opacity-0 group-hover:opacity-100 hover:scale-110 translate-x-2 group-hover:translate-x-0 border border-gray-100 hover:border-gray-300"
+      class="wishlist-btn absolute bottom-16 right-4 bg-white p-3 rounded-full shadow-lg transition-all duration-500 transform opacity-0 group-hover:opacity-100 hover:scale-110 translate-x-2 group-hover:translate-x-0 border border-gray-100 hover:border-gray-300"
+      data-product-id={product.id}
+      onclick={`toggleWishlist(${JSON.stringify(product)}, this)`}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="h-4 w-4 text-gray-700"
+        class="wishlist-icon h-4 w-4 text-gray-700"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -257,9 +242,30 @@ const getFirstImage = (product: Props["product"]) => {
   .group:hover .bg-white {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   }
+
+  /* Wishlist button styles */
+  .wishlist-btn.wishlist-active {
+    background-color: #ef4444;
+    border-color: #ef4444;
+  }
+
+  .wishlist-btn.wishlist-active .wishlist-icon {
+    fill: white;
+    color: white;
+  }
+
+  .wishlist-btn.wishlist-active:hover {
+    background-color: #dc2626;
+    border-color: #dc2626;
+  }
 </style>
 
 <script is:inline>
+  // Initialize wishlist state on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    updateWishlistButtons();
+  });
+
   function addToCart(product, buttonElement) {
     if (!product.in_stock || product.stock_quantity <= 0) {
       showToast("Product is out of stock", "error");
@@ -344,10 +350,101 @@ const getFirstImage = (product: Props["product"]) => {
     }, 2500);
   }
 
+  function toggleWishlist(product, buttonElement) {
+    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || { items: [], totalItems: 0 };
+    
+    // Convert array format to object format if needed
+    if (Array.isArray(wishlist)) {
+      wishlist = { items: wishlist, totalItems: wishlist.length };
+    }
+    
+    // Ensure wishlist.items exists
+    if (!wishlist.items) {
+      wishlist.items = [];
+    }
+    
+    const isInWishlist = wishlist.items.some(item => item.id === product.id);
+    
+    if (isInWishlist) {
+      // Remove from wishlist
+      wishlist.items = wishlist.items.filter(item => item.id !== product.id);
+      wishlist.totalItems = wishlist.items.length;
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      
+      // Update button appearance
+      buttonElement.classList.remove("wishlist-active");
+      showToast(`${product.name} removed from wishlist`, "info");
+    } else {
+      // Add to wishlist
+      wishlist.items.push({
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        price: product.price,
+        discount_price: product.discount_price,
+        image: product.gallery && product.gallery[0] ? product.gallery[0] : "https://placehold.co/400x400",
+        in_stock: product.in_stock,
+        stock_quantity: product.stock_quantity,
+        attributes: product.attributes || {}
+      });
+      wishlist.totalItems = wishlist.items.length;
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      
+      // Update button appearance
+      buttonElement.classList.add("wishlist-active");
+      showToast(`${product.name} added to wishlist`, "success");
+    }
+    
+    // Dispatch custom event for wishlist updates
+    window.dispatchEvent(new CustomEvent("wishlist-updated", { detail: wishlist }));
+    
+    // Update wishlist count in navbar
+    updateWishlistCount();
+  }
+
+  function updateWishlistButtons() {
+    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || { items: [], totalItems: 0 };
+    const wishlistButtons = document.querySelectorAll('.wishlist-btn');
+    
+    // Handle both array format and object format with items property
+    const wishlistItems = Array.isArray(wishlist) ? wishlist : (wishlist.items || []);
+    
+    wishlistButtons.forEach(button => {
+      const productId = parseInt(button.getAttribute('data-product-id'));
+      const isInWishlist = wishlistItems.some(item => item.id === productId);
+      
+      if (isInWishlist) {
+        button.classList.add("wishlist-active");
+      } else {
+        button.classList.remove("wishlist-active");
+      }
+    });
+  }
+
+  function updateWishlistCount() {
+    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || { items: [], totalItems: 0 };
+    const wishlistCounts = document.querySelectorAll('.wishlist-count');
+    
+    // Handle both array format and object format with items property
+    const wishlistItems = Array.isArray(wishlist) ? wishlist : (wishlist.items || []);
+    const totalItems = Array.isArray(wishlist) ? wishlist.length : (wishlist.totalItems || 0);
+    
+    wishlistCounts.forEach(countElement => {
+      countElement.textContent = totalItems || "";
+      countElement.classList.toggle("hidden", totalItems === 0);
+    });
+  }
+
   function showToast(message, type = "success") {
     // Use the global custom toast component
     if (window.customToast) {
       window.customToast.show(message, type, 4000);
     }
   }
+
+  // Listen for wishlist updates
+  window.addEventListener('wishlist-updated', function() {
+    updateWishlistButtons();
+    updateWishlistCount();
+  });
 </script>

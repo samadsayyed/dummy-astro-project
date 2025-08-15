@@ -31,36 +31,36 @@ try {
 }
 ---
 
-<section class="py-16 bg-gradient-to-br from-gray-50 to-white">
+<section class="py-16 bg-gradient-to-br from-gray-50 to-white" data-aos="fade-up">
   <div class="max-w-7xl mx-auto px-4">
     <!-- Header Section -->
-    <div class="text-center mb-12">
-      <div class="inline-flex items-center space-x-2 px-4 py-2 bg-black text-white text-sm font-mono tracking-widest rounded-full mb-6">
+    <div class="text-center mb-12" data-aos="fade-up" data-aos-delay="200">
+      <div class="inline-flex items-center space-x-2 px-4 py-2 bg-black text-white text-sm font-mono tracking-widest rounded-full mb-6" data-aos="fade-up" data-aos-delay="300">
         <span>BEST DEALS</span>
       </div>
       
-      <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+      <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4" data-aos="fade-up" data-aos-delay="400">
         <span class="block">Best Modern Furniture</span>
         <span class="block text-gray-600">Deals</span>
       </h2>
       
-      <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed" data-aos="fade-up" data-aos-delay="500">
         Style Meets Savings. Redecorate without breaking the bank. Our bestsellers are now available at exclusive prices.
       </p>
     </div>
 
     <!-- Products Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12" data-aos="fade-up" data-aos-delay="600">
       {
-        products.map((product: Product) => {
+        products.map((product: Product, index: number) => {
           if (!product) return null;
-          return <ProductCard product={product} />;
+          return <div data-aos="zoom-in" data-aos-delay={700 + (index * 100)}><ProductCard product={product} /></div>;
         })
       }
     </div>
 
     <!-- CTA Section -->
-    <div class="text-center">
+    <div class="text-center" data-aos="fade-up" data-aos-delay="1100">
       <a 
         href="/shop" 
         class="group inline-flex items-center px-8 py-4 bg-black text-white font-medium tracking-wider text-sm uppercase hover:bg-gray-800 transition-all duration-300 border-2 border-black hover:border-gray-800"

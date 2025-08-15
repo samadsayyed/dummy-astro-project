@@ -56,7 +56,7 @@
             ></path>
           </svg>
           <span
-            class="absolute -top-3 -right-3 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center p-[10px]"
+            class="wishlist-count absolute -top-3 -right-3 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center p-[10px] hidden"
             >0</span
           >
         </a>
@@ -329,9 +329,12 @@
     closeMobileMenu();
     closeCart();
 
-    // Initialize cart
+    // Initialize cart and wishlist
     initCart();
     updateCartUI();
+    
+    // Initialize wishlist count
+    updateWishlistCount();
 
     // Event listeners
     mobileMenuButton.addEventListener("click", toggleMobileMenu);
@@ -354,6 +357,11 @@
     // Listen for cart updates
     window.addEventListener("cart-updated", () => {
       updateCartUI();
+    });
+
+    // Listen for wishlist updates
+    window.addEventListener("wishlist-updated", () => {
+      updateWishlistCount();
     });
 
     // Function to update cart UI
@@ -534,6 +542,19 @@
         );
         checkoutButton.removeAttribute("aria-disabled");
       }
+    }
+
+    // Function to update wishlist count
+    function updateWishlistCount() {
+      const wishlist = JSON.parse(localStorage.getItem("wishlist")) || { items: [], totalItems: 0 };
+      const wishlistCounts = document.querySelectorAll('.wishlist-count');
+      
+      wishlistCounts.forEach((countElement) => {
+        if (countElement) {
+          countElement.textContent = wishlist.totalItems || "";
+          countElement.classList.toggle("hidden", wishlist.totalItems === 0);
+        }
+      });
     }
   });
 </script>

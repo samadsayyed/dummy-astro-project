@@ -8,29 +8,31 @@ const blogPosts = await getAllBlogs();
 const featuredPosts = blogPosts.slice(0, 6);
 ---
 
-<section class="py-24 px-4 bg-white text-black">
+<section class="py-24 px-4 bg-white text-black" data-aos="fade-up">
   <div class="max-w-7xl mx-auto">
     <!-- Header Section -->
-    <div class="text-center mb-20">
-      <div class="inline-block mb-6">
+    <div class="text-center mb-20" data-aos="fade-up" data-aos-delay="200">
+      <div class="inline-block mb-6" data-aos="fade-up" data-aos-delay="300">
         <span class="text-xs font-mono tracking-widest text-gray-600 uppercase">Insights & Inspiration</span>
       </div>
-      <h2 class="text-5xl md:text-7xl font-light text-black mb-6 tracking-tight">
+      <h2 class="text-5xl md:text-7xl font-light text-black mb-6 tracking-tight" data-aos="fade-up" data-aos-delay="400">
         BLOG
         <span class="block text-2xl md:text-3xl font-light text-gray-600 mt-2 tracking-widest">PERSPECTIVES</span>
       </h2>
-      <div class="w-24 h-px bg-gradient-to-r from-transparent via-black to-transparent mx-auto"></div>
+      <div class="w-24 h-px bg-gradient-to-r from-transparent via-black to-transparent mx-auto" data-aos="fade-up" data-aos-delay="500"></div>
     </div>
     
     <!-- Blog Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {featuredPosts.map((post) => (
-        <BlogCard post={post} showAuthor={true} />
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-aos="fade-up" data-aos-delay="600">
+      {featuredPosts.map((post, index) => (
+        <div data-aos="zoom-in" data-aos-delay={700 + (index * 100)}>
+          <BlogCard post={post} showAuthor={true} />
+        </div>
       ))}
     </div>
     
     <!-- View All Button -->
-    <div class="text-center mt-16">
+    <div class="text-center mt-16" data-aos="fade-up" data-aos-delay="1300">
       <a
         href="/blogs"
         class="group inline-flex items-center px-12 py-4 bg-black text-white font-mono tracking-wider text-sm uppercase hover:bg-gray-800 transition-all duration-300 border border-black hover:border-gray-800"

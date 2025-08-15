@@ -1,0 +1,253 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getWishlist, removeFromWishlist, formatPrice } from '../utils/wishlistUtils';
+---
+
+<Layout title="Wishlist - Nooni">
+  <div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Page Header -->
+      <div class="mb-8 flex justify-between items-center">
+        <div>
+          <h1 class="text-3xl font-light text-gray-900 mb-2">My Wishlist</h1>
+          <p class="text-gray-600">Save your favorite items for later</p>
+        </div>
+        <button 
+          id="clear-all-btn"
+          data-action="clear-all-wishlist"
+          class="hidden px-4 py-2 text-sm font-medium text-red-600 hover:text-red-800 transition-colors"
+        >
+          Clear All
+        </button>
+      </div>
+
+             <!-- Wishlist Container -->
+       <div id="wishlist-container" class="bg-white shadow-sm border border-gray-200">
+        <!-- Empty State -->
+        <div id="empty-wishlist" class="hidden p-12 text-center">
+          <svg class="mx-auto h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Your wishlist is empty</h3>
+          <p class="text-gray-500 mb-6">Start adding items to your wishlist to see them here</p>
+                     <a href="/shop" class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium text-white bg-black hover:bg-gray-900 transition-colors">
+            Start Shopping
+          </a>
+        </div>
+
+        <!-- Wishlist Items -->
+        <div id="wishlist-items" class="divide-y divide-gray-200">
+          <!-- Items will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { getWishlist, removeFromWishlist, formatPrice } from '../utils/wishlistUtils';
+
+  document.addEventListener('DOMContentLoaded', function() {
+    renderWishlist();
+    
+    // Listen for wishlist updates
+    window.addEventListener('wishlist-updated', function() {
+      renderWishlist();
+    });
+
+    // Event delegation for wishlist actions
+    document.addEventListener('click', function(event) {
+      const target = event.target as HTMLElement;
+      const button = target.closest('button');
+      
+      if (!button) return;
+      
+      const action = button.getAttribute('data-action');
+      const productId = button.getAttribute('data-product-id');
+      
+      if (action === 'remove-from-wishlist' && productId) {
+        removeFromWishlistPage(parseInt(productId));
+      } else if (action === 'move-to-cart' && productId) {
+        moveToCart(parseInt(productId));
+      } else if (action === 'clear-all-wishlist') {
+        clearAllWishlist();
+      }
+    });
+  });
+
+  function renderWishlist() {
+    const wishlist = getWishlist();
+    const container = document.getElementById('wishlist-container');
+    const emptyState = document.getElementById('empty-wishlist');
+    const itemsContainer = document.getElementById('wishlist-items');
+    const clearAllBtn = document.getElementById('clear-all-btn');
+    
+    if (!wishlist.items || wishlist.items.length === 0) {
+      emptyState.classList.remove('hidden');
+      itemsContainer.innerHTML = '';
+      clearAllBtn.classList.add('hidden');
+      return;
+    }
+    
+    emptyState.classList.add('hidden');
+    clearAllBtn.classList.remove('hidden');
+    
+    // Render each wishlist item
+    itemsContainer.innerHTML = wishlist.items.map(item => `
+      <div class="wishlist-item p-6 flex items-center space-x-6" data-product-id="${item.id}">
+                 <!-- Product Image -->
+         <div class="flex-shrink-0 w-24 h-24">
+           <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+         </div>
+        
+        <!-- Product Info -->
+        <div class="flex-1 min-w-0">
+          <h3 class="text-lg font-medium text-gray-900 mb-1">
+            <a href="/shop/${item.slug}" class="hover:text-gray-600 transition-colors">
+              ${item.name}
+            </a>
+          </h3>
+          
+          <!-- Price -->
+          <div class="flex items-center space-x-2 mb-2">
+            ${item.discount_price && parseFloat(item.discount_price) < parseFloat(item.price) 
+              ? `<span class="text-lg font-bold text-gray-900">${formatPrice(item.discount_price)}</span>
+                 <span class="text-sm text-gray-500 line-through">${formatPrice(item.price)}</span>`
+              : `<span class="text-lg font-bold text-gray-900">${formatPrice(item.price)}</span>`
+            }
+          </div>
+          
+          <!-- Stock Status -->
+          <div class="text-sm">
+            ${item.in_stock && item.stock_quantity > 0 
+              ? `<span class="text-green-600">In Stock (${item.stock_quantity} available)</span>`
+              : `<span class="text-red-600">Out of Stock</span>`
+            }
+          </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="flex items-center space-x-3">
+                     <!-- Move to Cart Button -->
+           <button 
+             data-action="move-to-cart"
+             data-product-id="${item.id}"
+             class="move-to-cart-btn px-4 py-2 bg-black text-white text-sm font-medium hover:bg-gray-900 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+             ${!item.in_stock || item.stock_quantity <= 0 ? 'disabled' : ''}
+           >
+            ${item.in_stock && item.stock_quantity > 0 ? 'Move to Cart' : 'Out of Stock'}
+          </button>
+          
+          <!-- Remove Button -->
+          <button 
+            data-action="remove-from-wishlist"
+            data-product-id="${item.id}"
+            class="remove-btn p-2 text-gray-400 hover:text-red-500 transition-colors"
+            aria-label="Remove from wishlist"
+          >
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+
+
+  function removeFromWishlistPage(productId: number) {
+    const wishlist = JSON.parse(localStorage.getItem("wishlist") || "{}") || { items: [], totalItems: 0 };
+    const product = wishlist.items.find((item: any) => item.id === productId);
+    
+    if (product) {
+      wishlist.items = wishlist.items.filter((item: any) => item.id !== productId);
+      wishlist.totalItems = wishlist.items.length;
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      
+      // Dispatch wishlist update event
+      window.dispatchEvent(new CustomEvent("wishlist-updated", { detail: wishlist }));
+      
+      showToast(`${product.name} removed from wishlist`, "info");
+    }
+  }
+
+  function moveToCart(productId: number) {
+    const wishlist = JSON.parse(localStorage.getItem("wishlist") || "{}") || { items: [], totalItems: 0 };
+    const product = wishlist.items.find((item: any) => item.id === productId);
+    
+    if (!product) return;
+    
+    if (!product.in_stock || product.stock_quantity <= 0) {
+      showToast("Product is out of stock", "error");
+      return;
+    }
+
+    try {
+      // Add to cart
+      const cart = JSON.parse(localStorage.getItem("cart") || "{}") || {
+        items: [],
+        totalItems: 0,
+        subtotal: 0,
+      };
+
+      if (!cart.items) {
+        cart.items = [];
+      }
+
+      const existingItemIndex = cart.items.findIndex((item: any) => item.id === product.id);
+
+      if (existingItemIndex >= 0) {
+        cart.items[existingItemIndex].quantity += 1;
+      } else {
+        cart.items.push({
+          id: product.id,
+          name: product.name,
+          price: product.discount_price || product.price,
+          image: product.image,
+          quantity: 1,
+        });
+      }
+
+      cart.totalItems = cart.items.reduce((total: number, item: any) => total + item.quantity, 0);
+      cart.subtotal = cart.items.reduce((total: number, item: any) => total + parseFloat(item.price) * item.quantity, 0);
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+      
+      // Remove from wishlist
+      wishlist.items = wishlist.items.filter((item: any) => item.id !== product.id);
+      wishlist.totalItems = wishlist.items.length;
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      
+      // Dispatch events
+      window.dispatchEvent(new CustomEvent("cart-updated", { detail: cart }));
+      window.dispatchEvent(new CustomEvent("wishlist-updated", { detail: wishlist }));
+      
+      showToast(`${product.name} moved to cart`, "success");
+      
+      // Re-render the wishlist to update the UI
+      renderWishlist();
+    } catch (error) {
+      console.error("Error moving item to cart:", error);
+      showToast("Error moving item to cart", "error");
+    }
+  }
+
+  function clearAllWishlist() {
+    if (confirm('Are you sure you want to clear all items from your wishlist?')) {
+      const wishlist = { items: [], totalItems: 0 };
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      
+      // Dispatch wishlist update event
+      window.dispatchEvent(new CustomEvent("wishlist-updated", { detail: wishlist }));
+      
+      showToast("Wishlist cleared", "info");
+    }
+  }
+
+  function showToast(message: string, type = "success") {
+    if ((window as any).customToast) {
+      (window as any).customToast.show(message, type, 4000);
+    }
+  }
+</script>
