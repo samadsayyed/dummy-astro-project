@@ -1,0 +1,545 @@
+---
+// Import necessary components and services
+import Layout from '../../layouts/Layout.astro';
+import CategoryHeader from '../../components/CategoryHeader.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import CategoriesService from '../../api/categoriesService.js';
+import { productsService } from '../../api/productsService.js';
+import Toast from '../../components/Toast.astro';
+
+// Generate static paths for all categories
+export async function getStaticPaths() {
+  try {
+    const categories = await CategoriesService.getAll();
+    
+    const paths = await Promise.all(
+      categories.map(async (category) => {
+        try {
+          // Generate slug if not available
+          const slug = category.slug || category.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+          
+                     // Fetch products for this category
+           let categoryProducts = [];
+           try {
+             // Get products by category name (filters from all products)
+             categoryProducts = await CategoriesService.getProductsByCategory(category.name);
+           } catch (error) {
+             console.error(`Failed to fetch products for category ${category.name}:`, error);
+             categoryProducts = [];
+           }
+
+          return {
+            params: { slug },
+            props: {
+              category: {
+                id: category.id,
+                name: category.name,
+                slug: slug,
+                description: category.description || `Discover our premium ${category.name.toLowerCase()} collection at Bablon. Quality furniture and home decor pieces designed to transform your space.`,
+                banner_image: category.banner_image || null,
+                meta_title: category.meta_title || `${category.name} | Bablon`,
+                meta_description: category.meta_description || `Shop ${category.name} products at Bablon. Premium quality furniture and home decor with modern designs and exceptional craftsmanship.`,
+                created_at: category.created_at || new Date().toISOString()
+              },
+              products: categoryProducts.map(product => ({
+                id: product.id,
+                name: product.name,
+                slug: product.slug,
+                price: product.price ? product.price.toString() : '0',
+                discount_price: product.discount_price ? product.discount_price.toString() : undefined,
+                gallery: product.gallery || [],
+                in_stock: product.in_stock ?? true,
+                stock_quantity: product.stock_quantity ?? 0,
+                attributes: product.attributes || {},
+                category_name: product.category_name || category.name,
+                created_at: product.created_at || new Date().toISOString()
+              }))
+            }
+          };
+        } catch (error) {
+          console.error(`Error processing category ${category.name}:`, error);
+          return null;
+        }
+      })
+    );
+
+    // Filter out any null results
+    return paths.filter(path => path !== null);
+  } catch (error) {
+    console.error("❌ Error generating static paths for categories:", error);
+    return [];
+  }
+}
+
+// Get the category and products data from props
+const { category, products } = Astro.props;
+
+// Ensure products is an array
+const categoryProducts = Array.isArray(products) ? products : [];
+
+// SEO Meta tags
+const pageTitle = category.meta_title || `${category.name} | Bablon`;
+const pageDescription = category.meta_description || `Shop ${category.name} products at Bablon. Premium quality furniture and home decor with modern designs and exceptional craftsmanship.`;
+const canonicalUrl = `${Astro.site || 'https://bablon.in'}/category/${category.slug}`;
+
+// Structured data for SEO
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": category.name,
+  "description": category.description,
+  "url": canonicalUrl,
+  "mainEntity": {
+    "@type": "ItemList",
+    "numberOfItems": categoryProducts.length,
+    "itemListElement": categoryProducts.map((product, index) => ({
+      "@type": "Product",
+      "position": index + 1,
+      "name": product.name,
+      "url": `${Astro.site || 'https://bablon.in'}/shop/${product.slug}`,
+      "image": product.gallery?.[0] || "https://placehold.co/400x400",
+      "offers": {
+        "@type": "Offer",
+        "price": product.discount_price || product.price,
+        "priceCurrency": "INR",
+        "availability": product.in_stock && product.stock_quantity > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+      }
+    }))
+  }
+};
+---
+
+<Layout title={pageTitle}>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content={pageDescription} slot="head" />
+  <meta name="keywords" content={`${category.name}, furniture, home decor, Bablon, ${category.name.toLowerCase()} collection`} slot="head" />
+  <meta property="og:title" content={pageTitle} slot="head" />
+  <meta property="og:description" content={pageDescription} slot="head" />
+  <meta property="og:url" content={canonicalUrl} slot="head" />
+  <meta property="og:type" content="website" slot="head" />
+  {category.banner_image && (
+    <meta property="og:image" content={category.banner_image} slot="head" />
+  )}
+  <meta name="twitter:card" content="summary_large_image" slot="head" />
+  <meta name="twitter:title" content={pageTitle} slot="head" />
+  <meta name="twitter:description" content={pageDescription} slot="head" />
+  <link rel="canonical" href={canonicalUrl} slot="head" />
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} slot="head"></script>
+
+  <!-- Category Header -->
+  <CategoryHeader category={category} productCount={categoryProducts.length} />
+
+  <!-- Main Content -->
+  <main class="bg-gray-50 min-h-screen">
+    <!-- Products Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <!-- Section Header -->
+      <div class="text-center mb-12" data-aos="fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          {category.name} Collection
+        </h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Explore our curated selection of {category.name.toLowerCase()} products designed to elevate your space
+        </p>
+      </div>
+
+      <!-- Loading State (Hidden by default) -->
+      <div id="loading-state" class="hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {Array.from({ length: 8 }).map(() => (
+            <div class="animate-pulse">
+              <div class="bg-gray-300 h-80 mb-4"></div>
+              <div class="bg-gray-300 h-4 mb-2"></div>
+              <div class="bg-gray-300 h-4 w-3/4"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      {categoryProducts.length > 0 ? (
+        <div 
+          id="products-grid"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+        >
+          {categoryProducts.map((product, index) => (
+            <div 
+              data-aos="fade-up" 
+              data-aos-delay={index * 100}
+              class="transform hover:scale-105 transition-all duration-300"
+            >
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <!-- Empty State -->
+        <div 
+          id="empty-state"
+          class="text-center py-16" 
+          data-aos="fade-up"
+        >
+          <div class="max-w-md mx-auto">
+            <div class="w-24 h-24 mx-auto mb-6 bg-gray-200 flex items-center justify-center">
+              <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+              No Products Found
+            </h3>
+            <p class="text-gray-600 mb-8">
+              We're currently updating our {category.name.toLowerCase()} collection. Check back soon for new arrivals!
+            </p>
+            <div class="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
+              <a 
+                href="/shop" 
+                class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium text-white bg-gray-900 hover:bg-gray-800 transition-colors"
+              >
+                Browse All Products
+              </a>
+              <a 
+                href="/" 
+                class="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+              >
+                Back to Home
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <!-- Featured Categories Section -->
+      <div class="mt-24" data-aos="fade-up">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4">
+            Explore Other Collections
+          </h2>
+          <p class="text-lg text-gray-600">
+            Discover more premium furniture and home decor categories
+          </p>
+        </div>
+        
+        <!-- Categories Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {['Living Room', 'Bedroom', 'Dining', 'Office'].map((categoryName, index) => (
+            <a 
+              href={`/category/${categoryName.toLowerCase().replace(/\s+/g, '-')}`}
+              class="group relative overflow-hidden bg-white shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+              data-aos="fade-up" 
+              data-aos-delay={index * 100}
+            >
+              <div class="aspect-w-1 aspect-h-1">
+                <img 
+                  src={`https://placehold.co/300x300/f3f4f6/6b7280?text=${encodeURIComponent(categoryName)}`}
+                  alt={categoryName}
+                  class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-all duration-300"></div>
+              </div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <h3 class="text-white font-semibold text-lg text-center px-4 group-hover:scale-110 transition-transform duration-300">
+                  {categoryName}
+                </h3>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Interior Design Services Showcase -->
+    <section class="relative py-16 overflow-hidden" data-aos="fade-up">
+      <!-- Background Image with Overlay -->
+      <div class="absolute inset-0 bg-gray-900">
+        <div 
+          class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 bg-[url('/inside-weather-dbH_vy7vICE-unsplash.jpg')] bg-blend-multiply"
+        ></div>
+        <div class="absolute inset-0 bg-gray-900/80"></div>
+      </div>
+      
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-16" data-aos="fade-up">
+          <div class="inline-flex items-center space-x-2 px-4 py-2 bg-white/10 border border-white/20 mb-6">
+            <div class="w-1.5 h-1.5 bg-white"></div>
+            <span class="text-xs font-mono tracking-widest text-white/90 uppercase">Design Services</span>
+          </div>
+          <h2 class="text-4xl md:text-5xl font-light text-white mb-6">
+            Transform Your Space
+            <span class="block text-2xl md:text-3xl font-light text-gray-300 mt-2 tracking-widest">
+              With Professional Interior Design
+            </span>
+          </h2>
+          <p class="text-lg text-gray-300 max-w-3xl mx-auto">
+            Beyond furniture, we offer comprehensive interior design services to create cohesive, beautiful spaces that reflect your style and enhance your lifestyle.
+          </p>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <!-- Service 1: Space Planning -->
+          <div class="group bg-white/5 border border-white/10 p-8 hover:bg-white/10 transition-all duration-300" data-aos="fade-up" data-aos-delay="100">
+            <div class="w-16 h-16 bg-white/10 flex items-center justify-center mb-6 group-hover:bg-white/20 transition-colors">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-4">Space Planning</h3>
+            <p class="text-gray-300 mb-6">
+              Optimize your layout with our expert space planning services. We analyze traffic flow, functionality, and aesthetics to create the perfect arrangement.
+            </p>
+            <div class="text-sm text-gray-400">
+              <span class="font-mono">01</span> • Layout Analysis • Furniture Placement • Traffic Flow
+            </div>
+          </div>
+
+          <!-- Service 2: Color Consultation -->
+          <div class="group bg-white/5 border border-white/10 p-8 hover:bg-white/10 transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
+            <div class="w-16 h-16 bg-white/10 flex items-center justify-center mb-6 group-hover:bg-white/20 transition-colors">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-4">Color Consultation</h3>
+            <p class="text-gray-300 mb-6">
+              Create the perfect mood with our color consultation. We select harmonious color palettes that enhance your space and reflect your personality.
+            </p>
+            <div class="text-sm text-gray-400">
+              <span class="font-mono">02</span> • Color Psychology • Palette Selection • Mood Creation
+            </div>
+          </div>
+
+          <!-- Service 3: Lighting Design -->
+          <div class="group bg-white/5 border border-white/10 p-8 hover:bg-white/10 transition-all duration-300" data-aos="fade-up" data-aos-delay="300">
+            <div class="w-16 h-16 bg-white/10 flex items-center justify-center mb-6 group-hover:bg-white/20 transition-colors">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-4">Lighting Design</h3>
+            <p class="text-gray-300 mb-6">
+              Illuminate your space with purpose. Our lighting design creates ambiance, highlights features, and ensures functionality throughout your home.
+            </p>
+            <div class="text-sm text-gray-400">
+              <span class="font-mono">03</span> • Ambient Lighting • Task Lighting • Accent Lighting
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="text-center" data-aos="fade-up" data-aos-delay="400">
+          <div class="bg-white/5 border border-white/10 p-12 max-w-4xl mx-auto">
+            <h3 class="text-3xl font-light text-white mb-6">
+              Ready to Transform Your {category.name} Space?
+            </h3>
+            <p class="text-gray-300 mb-8 max-w-2xl mx-auto">
+              Let our interior design experts help you create a cohesive, beautiful space that perfectly complements your {category.name.toLowerCase()} furniture.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <a 
+                href="https://varexinterior.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group inline-flex items-center px-8 py-4 bg-white text-black font-mono tracking-wider text-sm uppercase hover:bg-gray-100 transition-all duration-300 border border-white hover:border-gray-100"
+              >
+                Start Your Design Journey
+                <svg class="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+              </a>
+              <div class="text-gray-400 text-sm font-mono">
+                Free Consultation • Professional Design • Quality Guarantee
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast Component -->
+  <Toast />
+</Layout>
+
+<style>
+  /* Custom animations for product cards */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fadeInUp {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  /* Loading skeleton animation */
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Hover effects for product cards */
+  .product-card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .product-card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Enhanced grid animations */
+  .grid-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .grid-item:nth-child(1) { animation-delay: 0.1s; }
+  .grid-item:nth-child(2) { animation-delay: 0.2s; }
+  .grid-item:nth-child(3) { animation-delay: 0.3s; }
+  .grid-item:nth-child(4) { animation-delay: 0.4s; }
+  .grid-item:nth-child(5) { animation-delay: 0.5s; }
+  .grid-item:nth-child(6) { animation-delay: 0.6s; }
+  .grid-item:nth-child(7) { animation-delay: 0.7s; }
+  .grid-item:nth-child(8) { animation-delay: 0.8s; }
+
+  /* Responsive grid improvements */
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem;
+    }
+  }
+
+  /* Enhanced backdrop blur for better text readability */
+  .backdrop-blur-sm {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  
+  /* Smooth transitions */
+  * {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+  
+  /* Custom focus styles */
+  a:focus {
+    outline: 2px solid black;
+    outline-offset: 2px;
+  }
+  
+  /* Text selection */
+  ::selection {
+    background: rgba(0, 0, 0, 0.1);
+    color: black;
+  }
+</style>
+
+<script>
+  // Enhanced page functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    // Initialize AOS animations if available
+    if (typeof AOS !== 'undefined') {
+      AOS.init({
+        duration: 800,
+        easing: 'ease-in-out',
+        once: true,
+        offset: 100
+      });
+    }
+
+    // Newsletter form handling
+    const newsletterForm = document.querySelector('form');
+    if (newsletterForm) {
+      newsletterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = e.target.querySelector('input[type="email"]').value;
+        
+        // Show success message
+        if (window.customToast) {
+          window.customToast.show('Thank you for subscribing!', 'success', 4000);
+        }
+        
+        // Reset form
+        e.target.reset();
+      });
+    }
+
+    // Lazy loading for images
+    const images = document.querySelectorAll('img[loading="lazy"]');
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          img.classList.add('animate-fadeInUp');
+          observer.unobserve(img);
+        }
+      });
+    });
+
+    images.forEach(img => imageObserver.observe(img));
+
+    // Enhanced scroll animations
+    const animateOnScroll = () => {
+      const elements = document.querySelectorAll('[data-aos]');
+      elements.forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        const elementVisible = 150;
+        
+        if (elementTop < window.innerHeight - elementVisible) {
+          element.classList.add('animate-fadeInUp');
+        }
+      });
+    };
+
+    window.addEventListener('scroll', animateOnScroll);
+    animateOnScroll(); // Initial check
+
+    // Performance optimization: Preload critical images
+    const preloadCriticalImages = () => {
+      const criticalImages = document.querySelectorAll('img[loading="eager"]');
+      criticalImages.forEach(img => {
+        if (img.dataset.src) {
+          img.src = img.dataset.src;
+        }
+      });
+    };
+
+    preloadCriticalImages();
+  });
+
+  // Error handling for failed image loads
+  document.addEventListener('error', (e) => {
+    if (e.target.tagName === 'IMG') {
+      e.target.src = 'https://placehold.co/400x400/f3f4f6/6b7280?text=Image+Not+Found';
+    }
+  }, true);
+</script>
