@@ -26,7 +26,7 @@ interface Category {
       {
         categories.map((category: Category, index: number) => (
           <div class="swiper-slide" data-aos="zoom-in" data-aos-delay={200 + (index * 100)}>
-            <a href="#" class="group flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors duration-300">
+            <a href={`/category/${category.slug || category.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`} class="group flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors duration-300">
               <div class="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
                 <img
                   src={category.image}
