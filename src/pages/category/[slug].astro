@@ -18,15 +18,19 @@ export async function getStaticPaths() {
           // Generate slug if not available
           const slug = category.slug || category.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
           
-                     // Fetch products for this category
-           let categoryProducts = [];
-           try {
-             // Get products by category name (filters from all products)
-             categoryProducts = await CategoriesService.getProductsByCategory(category.name);
-           } catch (error) {
-             console.error(`Failed to fetch products for category ${category.name}:`, error);
-             categoryProducts = [];
-           }
+          // Fetch products for this category
+          let categoryProducts = [];
+          try {
+            // Get all products and filter by category
+            const allProducts = await productsService.getAllProducts();
+            categoryProducts = allProducts.filter(product => 
+              product.category_name === category.name || 
+              product.category === category.name
+            );
+          } catch (error) {
+            console.error(`Failed to fetch products for category ${category.name}:`, error);
+            categoryProducts = [];
+          }
 
           return {
             params: { slug },
