@@ -11,14 +11,12 @@ const transformBlogData = (apiBlog) => {
   const decodeUnicodeHtml = (html) => {
     if (!html) return '';
     try {
-      console.log('Original HTML content length:', html.length);
       
       // First decode Unicode escapes like \u003C to <
       const decoded = html.replace(/\\u([0-9a-fA-F]{4})/g, (match, hex) => {
         return String.fromCharCode(parseInt(hex, 16));
       });
       
-      console.log('After Unicode decoding length:', decoded.length);
       
       // Then decode HTML entities
       const finalDecoded = decoded
@@ -31,7 +29,6 @@ const transformBlogData = (apiBlog) => {
         .replace(/\\n/g, '')
         .replace(/\\/g, '');
       
-      console.log('Final decoded content length:', finalDecoded.length);
       return finalDecoded;
     } catch (error) {
       console.error('Error decoding HTML content:', error);
@@ -94,11 +91,9 @@ const getBlogById = async (id) => {
 // Get a specific blog by slug
 const getBlogBySlug = async (slug) => {
   try {
-    console.log(`Fetching blog by slug: ${slug}`);
     const response = await apiClient.get(`/blogs/title/${slug}`);
     
     if (response.data.status === 'success' && response.data.data) {
-      console.log(`Successfully fetched blog: ${response.data.data.title}`);
       return transformBlogData(response.data.data);
     }
     

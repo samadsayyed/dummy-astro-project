@@ -17,7 +17,6 @@ const ShopContainer = ({
     availability: 'all',
     search: ''
   });
-  console.log(filters);
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
   const [currentPage, setCurrentPage] = useState(1);

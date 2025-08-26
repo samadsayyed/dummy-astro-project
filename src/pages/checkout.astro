@@ -135,9 +135,6 @@ import { getCart } from '../utils/cartUtils';
     const totalElement = document.getElementById('total');
     const placeOrderBtn = document.getElementById('place-order-btn');
     
-    // Check if cart has items
-    console.log(cart.items,"cart item");
-    console.log(cart.items.length,"cart item length");
 
     
     if (cart.items && cart.items.length > 0) {
@@ -146,7 +143,6 @@ import { getCart } from '../utils/cartUtils';
         emptyCartMessage.style.display = 'none';
         // Also add a class to ensure it's hidden
         emptyCartMessage.classList.add('hidden');
-        console.log('Empty cart message hidden');
       } else {
         console.error('Empty cart message element not found');
       }

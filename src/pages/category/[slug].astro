@@ -23,6 +23,8 @@ export async function getStaticPaths() {
           try {
             // Get all products and filter by category
             const allProducts = await productsService.getAllProducts();
+            console.log(allProducts);
+            
             categoryProducts = allProducts.filter(product => 
               product.category_name === category.name || 
               product.category === category.name

@@ -24,7 +24,7 @@ const productsService = {
   // New methods for the updated API
   getAllProducts: async () => {
     try {
-      const response = await apiClient.get('/public/products');
+      const response = await apiClient.get('/products?limit=1000');
       return response.data;
     } catch (error) {
       console.error("Error fetching all products:", error);

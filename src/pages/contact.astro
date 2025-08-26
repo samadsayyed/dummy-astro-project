@@ -209,8 +209,6 @@ import Toast from '../components/Toast.astro';
         message: messageInput ? messageInput.value.trim() : ''
       };
 
-      console.log('Contact form data:', data);
-
       // Validation
       if (!data.full_name || !data.email || !data.subject || !data.message) {
         if (window.customToast) {
