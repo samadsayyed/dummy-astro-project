@@ -102,10 +102,7 @@ import { getCart } from '../utils/cartUtils';
               <span class="text-gray-600">Shipping</span>
               <span id="shipping" class="font-medium">₹0.00</span>
             </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Tax</span>
-              <span id="tax" class="font-medium">₹0.00</span>
-            </div>
+
             <div class="flex justify-between pt-4 border-t border-gray-200">
               <span class="text-lg font-bold">Total</span>
               <span id="total" class="text-lg font-bold">₹0.00</span>
@@ -131,7 +128,6 @@ import { getCart } from '../utils/cartUtils';
     const emptyCartMessage = document.getElementById('empty-cart-message');
     const subtotalElement = document.getElementById('subtotal');
     const shippingElement = document.getElementById('shipping');
-    const taxElement = document.getElementById('tax');
     const totalElement = document.getElementById('total');
     const placeOrderBtn = document.getElementById('place-order-btn');
     
@@ -151,13 +147,11 @@ import { getCart } from '../utils/cartUtils';
       // Calculate totals
       const subtotal = cart.subtotal || cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       const shipping = subtotal > 1000 ? 0 : 100; // Free shipping for orders over ₹1000
-      const tax = subtotal * 0.18; // 18% tax
-      const total = subtotal + shipping + tax;
+      const total = subtotal + shipping;
       
       // Update summary values
       subtotalElement.textContent = `₹${subtotal.toFixed(2)}`;
       shippingElement.textContent = shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`;
-      taxElement.textContent = `₹${tax.toFixed(2)}`;
       totalElement.textContent = `₹${total.toFixed(2)}`;
       
       // Render cart items
