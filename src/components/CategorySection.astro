@@ -28,11 +28,19 @@ interface Category {
           <div class="swiper-slide" data-aos="zoom-in" data-aos-delay={200 + (index * 100)}>
             <a href={`/category/${category.slug || category.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`} class="group flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors duration-300">
               <div class="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-                <img
-                  src={category.image}
-                  alt={`${category.name} category`}
-                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                />
+                {category.image ? (
+                  <img
+                    src={category.image}
+                    alt={`${category.name} category`}
+                    class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                ) : (
+                  <div class="absolute inset-0 w-full h-full bg-black flex items-center justify-center">
+                    <span class="text-white text-xl font-bold">
+                      {category.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                )}
                 <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
               </div>
 
