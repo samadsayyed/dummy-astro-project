@@ -16,50 +16,89 @@ export async function getStaticPaths() {
       categories.map(async (category) => {
         try {
           // Generate slug if not available
-          const slug = category.slug || category.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+          const slug = category.slug ;
           
-          // Fetch products for this category
-          let categoryProducts = [];
+          // Fetch products for this category using the new API endpoint
+          let categoryData = null;
           try {
-            // Get all products and filter by category
-            const allProducts = await productsService.getAllProducts();
-            console.log(allProducts);
-            
-            categoryProducts = allProducts.filter(product => 
-              product.category_name === category.name || 
-              product.category === category.name
-            );
+            categoryData = await CategoriesService.getCategoryProducts(slug);
           } catch (error) {
             console.error(`Failed to fetch products for category ${category.name}:`, error);
-            categoryProducts = [];
-          }
-
-          return {
-            params: { slug },
-            props: {
+            categoryData = {
               category: {
                 id: category.id,
                 name: category.name,
                 slug: slug,
-                description: category.description || `Discover our premium ${category.name.toLowerCase()} collection at Bablon. Quality furniture and home decor pieces designed to transform your space.`,
-                banner_image: category.banner_image || null,
-                meta_title: category.meta_title || `${category.name} | Bablon`,
-                meta_description: category.meta_description || `Shop ${category.name} products at Bablon. Premium quality furniture and home decor with modern designs and exceptional craftsmanship.`,
-                created_at: category.created_at || new Date().toISOString()
+                parent_id: category.parent_id || null
               },
-              products: categoryProducts.map(product => ({
+              products: []
+            };
+          }
+
+          // Process products with variants support
+          const processedProducts = (categoryData.products || []).map(product => {
+            // Handle products with variants
+            if (product.has_variants && product.variants && product.variants.length > 0) {
+              // Use the first variant as the main product data
+              const firstVariant = product.variants[0];
+              return {
                 id: product.id,
                 name: product.name,
                 slug: product.slug,
+                sku: product.sku,
+                description: product.description,
+                short_description: product.short_description,
+                price: firstVariant.price ? firstVariant.price.toString() : '0',
+                discount_price: firstVariant.discount_price ? firstVariant.discount_price.toString() : undefined,
+                gallery: firstVariant.images || product.gallery || [],
+                in_stock: firstVariant.in_stock ?? true,
+                stock_quantity: firstVariant.stock_quantity ?? 0,
+                attributes: firstVariant.attributes || product.attributes || {},
+                category_name: product.category?.name || category.name,
+                category_slug: product.category?.slug || slug,
+                has_variants: true,
+                variants: product.variants,
+                created_at: product.created_at || new Date().toISOString()
+              };
+            } else {
+              // Handle products without variants
+              return {
+                id: product.id,
+                name: product.name,
+                slug: product.slug,
+                sku: product.sku,
+                description: product.description,
+                short_description: product.short_description,
                 price: product.price ? product.price.toString() : '0',
                 discount_price: product.discount_price ? product.discount_price.toString() : undefined,
                 gallery: product.gallery || [],
                 in_stock: product.in_stock ?? true,
                 stock_quantity: product.stock_quantity ?? 0,
                 attributes: product.attributes || {},
-                category_name: product.category_name || category.name,
+                category_name: product.category?.name || category.name,
+                category_slug: product.category?.slug || slug,
+                has_variants: false,
+                variants: [],
                 created_at: product.created_at || new Date().toISOString()
-              }))
+              };
+            }
+          });
+
+          return {
+            params: { slug },
+            props: {
+              category: {
+                id: categoryData.category?.id || category.id,
+                name: categoryData.category?.name || category.name,
+                slug: categoryData.category?.slug || slug,
+                parent_id: categoryData.category?.parent_id || category.parent_id || null,
+                description: category.description || `Discover our premium ${category.name.toLowerCase()} collection at Bablon. Quality furniture and home decor pieces designed to transform your space.`,
+                banner_image: category.banner_image || null,
+                meta_title: category.meta_title || `${category.name} | Bablon`,
+                meta_description: category.meta_description || `Shop ${category.name} products at Bablon. Premium quality furniture and home decor with modern designs and exceptional craftsmanship.`,
+                created_at: category.created_at || new Date().toISOString()
+              },
+              products: processedProducts
             }
           };
         } catch (error) {
@@ -82,6 +121,20 @@ const { category, products } = Astro.props;
 
 // Ensure products is an array
 const categoryProducts = Array.isArray(products) ? products : [];
+
+// Fetch all categories for the "Explore Other Collections" section
+let allCategories = [];
+try {
+  allCategories = await CategoriesService.getAll();
+} catch (error) {
+  console.error("Error fetching categories for collections section:", error);
+  allCategories = [];
+}
+
+// Filter out the current category and get the first 4 other categories
+const otherCategories = allCategories
+  .filter(cat => cat.slug !== category.slug)
+  .slice(0, 4);
 
 // SEO Meta tags
 const pageTitle = category.meta_title || `${category.name} | Bablon`;
@@ -230,29 +283,63 @@ const structuredData = {
         
         <!-- Categories Grid -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {['Living Room', 'Bedroom', 'Dining', 'Office'].map((categoryName, index) => (
+          {otherCategories.length > 0 ? otherCategories.map((cat, index) => (
             <a 
-              href={`/category/${categoryName.toLowerCase().replace(/\s+/g, '-')}`}
+              href={`/category/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`}
               class="group relative overflow-hidden bg-white shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
               data-aos="fade-up" 
               data-aos-delay={index * 100}
             >
               <div class="aspect-w-1 aspect-h-1">
-                <img 
-                  src={`https://placehold.co/300x300/f3f4f6/6b7280?text=${encodeURIComponent(categoryName)}`}
-                  alt={categoryName}
-                  class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                  loading="lazy"
-                />
+                {cat.image ? (
+                  <img 
+                    src={cat.image}
+                    alt={cat.name}
+                    class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                ) : (
+                  <img 
+                    src={`https://placehold.co/300x300/f3f4f6/6b7280?text=${encodeURIComponent(cat.name)}`}
+                    alt={cat.name}
+                    class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                )}
                 <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-all duration-300"></div>
               </div>
               <div class="absolute inset-0 flex items-center justify-center">
                 <h3 class="text-white font-semibold text-lg text-center px-4 group-hover:scale-110 transition-transform duration-300">
-                  {categoryName}
+                  {cat.name}
                 </h3>
               </div>
             </a>
-          ))}
+          )) : (
+            // Fallback to hardcoded categories if API fails
+            ['Living Room', 'Bedroom', 'Dining', 'Office'].map((categoryName, index) => (
+              <a 
+                href={`/category/${categoryName.toLowerCase().replace(/\s+/g, '-')}`}
+                class="group relative overflow-hidden bg-white shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+                data-aos="fade-up" 
+                data-aos-delay={index * 100}
+              >
+                <div class="aspect-w-1 aspect-h-1">
+                  <img 
+                    src={`https://placehold.co/300x300/f3f4f6/6b7280?text=${encodeURIComponent(categoryName)}`}
+                    alt={categoryName}
+                    class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                  <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-all duration-300"></div>
+                </div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <h3 class="text-white font-semibold text-lg text-center px-4 group-hover:scale-110 transition-transform duration-300">
+                    {categoryName}
+                  </h3>
+                </div>
+              </a>
+            ))
+          )}
         </div>
       </div>
     </section>
@@ -473,8 +560,8 @@ const structuredData = {
   // Enhanced page functionality
   document.addEventListener('DOMContentLoaded', () => {
     // Initialize AOS animations if available
-    if (typeof AOS !== 'undefined') {
-      AOS.init({
+    if (typeof (window as any).AOS !== 'undefined') {
+      (window as any).AOS.init({
         duration: 800,
         easing: 'ease-in-out',
         once: true,
@@ -487,15 +574,17 @@ const structuredData = {
     if (newsletterForm) {
       newsletterForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const email = e.target.querySelector('input[type="email"]').value;
+        const target = e.target as HTMLFormElement;
+        const emailInput = target.querySelector('input[type="email"]') as HTMLInputElement;
+        const email = emailInput?.value;
         
         // Show success message
-        if (window.customToast) {
-          window.customToast.show('Thank you for subscribing!', 'success', 4000);
+        if ((window as any).customToast) {
+          (window as any).customToast.show('Thank you for subscribing!', 'success', 4000);
         }
         
         // Reset form
-        e.target.reset();
+        target.reset();
       });
     }
 
@@ -504,7 +593,7 @@ const structuredData = {
     const imageObserver = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          const img = entry.target;
+          const img = entry.target as HTMLImageElement;
           img.classList.add('animate-fadeInUp');
           observer.unobserve(img);
         }
@@ -533,8 +622,9 @@ const structuredData = {
     const preloadCriticalImages = () => {
       const criticalImages = document.querySelectorAll('img[loading="eager"]');
       criticalImages.forEach(img => {
-        if (img.dataset.src) {
-          img.src = img.dataset.src;
+        const imageElement = img as HTMLImageElement;
+        if (imageElement.dataset?.src) {
+          imageElement.src = imageElement.dataset.src;
         }
       });
     };
@@ -544,8 +634,10 @@ const structuredData = {
 
   // Error handling for failed image loads
   document.addEventListener('error', (e) => {
-    if (e.target.tagName === 'IMG') {
-      e.target.src = 'https://placehold.co/400x400/f3f4f6/6b7280?text=Image+Not+Found';
+    const target = e.target as HTMLElement;
+    if (target && target.tagName === 'IMG') {
+      const img = target as HTMLImageElement;
+      img.src = 'https://placehold.co/400x400/f3f4f6/6b7280?text=Image+Not+Found';
     }
   }, true);
 </script>

@@ -45,6 +45,47 @@ try {
 ---
 
 <Layout title="Shop | Bablon">
+  <!-- Categories Section -->
+  <section class="py-12 px-4 max-w-7xl mx-auto bg-white">
+    <div class="mb-8">
+      <h2 class="text-2xl font-bold mb-3 uppercase">Shop by category</h2>
+      <p class="text-gray-600 max-w-2xl text-sm">
+        Browse our products by category to find exactly what you're looking for.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      {categories.slice(0, 5).map((category) => (
+        <a 
+          href={`/category/${category.slug || category.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`} 
+          class="group flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors duration-300 border border-gray-100 hover:border-gray-200"
+        >
+          <div class="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 mb-3">
+            {category.image ? (
+              <img
+                src={category.image}
+                alt={`${category.name} category`}
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+              />
+            ) : (
+              <div class="absolute inset-0 w-full h-full bg-black flex items-center justify-center">
+                <span class="text-white text-xl font-bold">
+                  {category.name.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
+            <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+          </div>
+
+          <div class="text-center">
+            <h3 class="text-sm font-medium text-gray-900 group-hover:text-black transition-colors">{category.name}</h3>
+            <p class="text-xs text-gray-600 mt-1">{category.products || 0} products</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
   <ShopContainer 
     initialProducts={products} 
     categories={categories} 
