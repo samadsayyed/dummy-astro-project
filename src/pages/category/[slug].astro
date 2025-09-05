@@ -10,10 +10,10 @@ import Toast from '../../components/Toast.astro';
 // Generate static paths for all categories
 export async function getStaticPaths() {
   try {
-    const categories = await CategoriesService.getAll();
+    const categories = await CategoriesService.getAllCategories();
     
     const paths = await Promise.all(
-      categories.map(async (category) => {
+      categories.map(async (category: any) => {
         try {
           // Generate slug if not available
           const slug = category.slug ;
@@ -29,14 +29,14 @@ export async function getStaticPaths() {
                 id: category.id,
                 name: category.name,
                 slug: slug,
-                parent_id: category.parent_id || null
+                // parent_id: category.parent_id || null
               },
               products: []
             };
           }
 
           // Process products with variants support
-          const processedProducts = (categoryData.products || []).map(product => {
+          const processedProducts = (categoryData.products || []).map((product: any) => {
             // Handle products with variants
             if (product.has_variants && product.variants && product.variants.length > 0) {
               // Use the first variant as the main product data
@@ -133,7 +133,7 @@ try {
 
 // Filter out the current category and get the first 4 other categories
 const otherCategories = allCategories
-  .filter(cat => cat.slug !== category.slug)
+  .filter((cat: any) => cat.slug !== category.slug)
   .slice(0, 4);
 
 // SEO Meta tags
@@ -283,7 +283,7 @@ const structuredData = {
         
         <!-- Categories Grid -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {otherCategories.length > 0 ? otherCategories.map((cat, index) => (
+          {otherCategories.length > 0 ? otherCategories.map((cat: any, index: number): any => (
             <a 
               href={`/category/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`}
               class="group relative overflow-hidden bg-white shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"

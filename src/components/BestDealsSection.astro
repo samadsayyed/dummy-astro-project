@@ -1,6 +1,22 @@
 ---
 import ProductCard from "./ProductCard.astro";
 
+interface TopSellingProduct {
+  id: number;
+  name: string;
+  sku: string;
+  slug: string;
+  price: number;
+  discount_price: number;
+  in_stock: boolean;
+  stock_quantity: number;
+  category_name: string;
+  gallery: string[];
+  has_variants: boolean;
+  category_slug: string;
+  total_sold: number;
+}
+
 interface Product {
   id: number;
   name: string;
@@ -16,18 +32,23 @@ interface Product {
 let products: Product[] = [];
 
 try {
-  const response = await fetch("https://admin.bablon.in/public/api/products");
-  const allProducts = await response.json();
-  // Filter products that have discounts and are in stock
-  const discountedProducts = allProducts.filter((product: Product) => 
-    product.discount_price && 
-    parseFloat(product.discount_price) < parseFloat(product.price) &&
-    product.in_stock && 
-    product.stock_quantity > 0
-  );
-  products = discountedProducts.slice(0, 4); // Limit to 4 best deals
+  const response = await fetch("https://admin.bablon.in/api/products/top-selling");
+  const topSellingProducts: TopSellingProduct[] = await response.json();
+
+  // Convert the API response to match ProductCard expectations
+  products = topSellingProducts.slice(0, 4).map((product: TopSellingProduct) => ({
+    id: product.id,
+    name: product.name,
+    slug: product.slug,
+    price: product.price.toString(),
+    discount_price: product.discount_price.toString(),
+    gallery: product.gallery,
+    in_stock: product.in_stock,
+    stock_quantity: product.stock_quantity,
+    attributes: {} // Add empty attributes object as ProductCard expects it
+  }));
 } catch (error) {
-  console.error("Error fetching products:", error);
+  console.error("Error fetching top-selling products:", error);
 }
 ---
 
@@ -35,17 +56,15 @@ try {
   <div class="max-w-7xl mx-auto px-4">
     <!-- Header Section -->
     <div class="text-center mb-12" data-aos="fade-up" data-aos-delay="200">
-      <div class="inline-flex items-center space-x-2 px-4 py-2 bg-black text-white text-sm font-mono tracking-widest rounded-full mb-6" data-aos="fade-up" data-aos-delay="300">
-        <!-- <span>BEST DEALS</span> -->
-      </div>
+      
       
       <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4" data-aos="fade-up" data-aos-delay="400">
-        <span class="block">Best Modern Furniture</span>
-        <span class="block text-gray-600">Deals</span>
+        <span class="block">Top Selling</span>
+        <span class="block text-gray-600">Furniture</span>
       </h2>
-      
+
       <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed" data-aos="fade-up" data-aos-delay="500">
-        Style Meets Savings. Redecorate without breaking the bank. Our bestsellers are now available at exclusive prices.
+        Discover our most popular pieces. These customer favorites combine style, quality, and timeless design that our community loves.
       </p>
     </div>
 
@@ -65,7 +84,7 @@ try {
         href="/shop" 
         class="group inline-flex items-center px-8 py-4 bg-black text-white font-medium tracking-wider text-sm uppercase hover:bg-gray-800 transition-all duration-300 border-2 border-black hover:border-gray-800"
       >
-        <span>Browse Bestsellers</span>
+        <span>Explore Top Sellers</span>
         <svg class="w-4 h-4 ml-3 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
         </svg>
